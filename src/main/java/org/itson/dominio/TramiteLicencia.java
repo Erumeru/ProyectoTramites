@@ -5,6 +5,7 @@
 package org.itson.dominio;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 /**
@@ -20,47 +22,39 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="TramiteLicencia")
+@PrimaryKeyJoinColumn(name = "id_tramite_licencia")
 public class TramiteLicencia extends Tramite implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    public Long getId() {
-        return id;
-    }
 
     @OneToOne(cascade= CascadeType.PERSIST)
     @JoinColumn(name="licenciaId",referencedColumnName="id")
     private Licencia licencia;
+
+    public TramiteLicencia() {
+    }
+
+    public TramiteLicencia(Licencia licencia, int costo, Calendar fechaExpedicion, Persona persona) {
+        super(costo, fechaExpedicion, persona);
+        this.licencia = licencia;
+    }
+
+    public TramiteLicencia(Licencia licencia, int costo, Calendar fechaExpedicion) {
+        super(costo, fechaExpedicion);
+        this.licencia = licencia;
+    }
     
-    public void setId(Long id) {
-        this.id = id;
+    public Licencia getLicencia() {
+        return licencia;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof TramiteLicencia)) {
-            return false;
-        }
-        TramiteLicencia other = (TramiteLicencia) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+    public void setLicencia(Licencia licencia) {
+        this.licencia = licencia;
     }
 
     @Override
     public String toString() {
-        return "org.itson.dominio.TramiteLicencia[ id=" + id + " ]";
+        return "TramiteLicencia{" + "licencia=" + licencia + '}';
     }
+    
+    
     
 }

@@ -8,7 +8,10 @@ import java.util.GregorianCalendar;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import org.itson.dominio.Auto;
 import org.itson.dominio.Persona;
+import org.itson.dominio.Placa;
+import org.itson.dominio.TramitePlacas;
 
 /**
  *
@@ -23,9 +26,19 @@ public class Pruebas {
         EntityManagerFactory emFactory = Persistence.createEntityManagerFactory("org.itson_Proyecto2BDA");
         EntityManager entityManager = emFactory.createEntityManager();
         
-        Persona persona = new Persona(false, new GregorianCalendar(), "6444123456", "DSDAER35462DSA", "Pepe", "Lopez", "Cota");
+        entityManager.getTransaction().begin();
         
+        Persona persona = new Persona(false, new GregorianCalendar(), "123456", "DASDM355123", "Mario", "Diaz", "Padilla");
+        TramitePlacas tramite = new TramitePlacas(100, new GregorianCalendar(), persona);
+        Auto auto = new Auto("Corolla", "Blanco", "ABC-123", "2003", "Toyota", true);
+        Placa placa = new Placa(tramite, "ABC-123", auto);
+        
+        entityManager.persist(auto);
         entityManager.persist(persona);
+        entityManager.persist(tramite);
+        entityManager.persist(placa);
+        
+        entityManager.getTransaction().commit();
         
     }
     

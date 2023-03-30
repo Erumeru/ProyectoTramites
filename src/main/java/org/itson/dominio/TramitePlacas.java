@@ -5,6 +5,7 @@
 package org.itson.dominio;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 /**
@@ -20,50 +22,28 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="TramitePlacas")
+@PrimaryKeyJoinColumn(name = "id_tramite_placas")
 public class TramitePlacas extends Tramite implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @OneToOne(mappedBy="tramitePlacas")
     private Placa placa;
-    
-    public Long getId() {
-        return id;
+
+    public TramitePlacas() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public TramitePlacas(int costo, Calendar fechaExpedicion) {
+        super(costo, fechaExpedicion);
+        this.placa = placa;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof TramiteLicencia)) {
-            return false;
-        }
-        TramiteLicencia other = (TramiteLicencia) object;
-        if ((this.id == null && other.getId() != null) || (this.id != null && !this.id.equals(other.getId()))) {
-            return false;
-        }
-        return true;
+    public TramitePlacas(int costo, Calendar fechaExpedicion, Persona persona) {
+        super(costo, fechaExpedicion, persona);
+        this.placa = placa;
     }
 
     @Override
     public String toString() {
-        return "TramitePlacas{" + "id=" + id + '}';
+        return "TramitePlacas{" + "placa=" + placa + '}';
     }
-
-    
-
-    
-    
+   
 }

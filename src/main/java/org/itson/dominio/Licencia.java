@@ -22,7 +22,7 @@ public class Licencia implements Serializable {
     @Column(name = "vigencia", nullable = false)
     private Integer vigencia;
 
-    @OneToOne(mappedBy="TramiteLicencia")
+    @OneToOne(mappedBy="licencia")
     private TramiteLicencia tramiteLicencia;
     
     public Licencia() {

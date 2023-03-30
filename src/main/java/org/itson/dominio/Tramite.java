@@ -13,7 +13,7 @@ import javax.persistence.*;
  * @author 233133_233259
  */
 @Entity
-@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy=InheritanceType.JOINED)
 public class Tramite implements Serializable {
 
     @Id
