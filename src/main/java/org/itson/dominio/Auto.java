@@ -25,15 +25,15 @@ public class Auto implements Serializable {
     @Column(name="id")
     private Long id;
     
-    @Column(name="modelo",nullable=false)
+    @Column(name="modelo",nullable=false, length=20)
     private String modelo;
-    @Column(name="color",nullable=false)
+    @Column(name="color",nullable=false, length=20)
     private String color;
-    @Column(name="numSerie",nullable=false)
+    @Column(name="numSerie",nullable=false, length=20)
     private String numSerie;
-    @Column(name="linea",nullable=false)
+    @Column(name="linea",nullable=false, length=20)
     private String linea;
-    @Column(name="marca",nullable=false)
+    @Column(name="marca",nullable=false, length=20)
     private String marca;
     @Column(name="nuevo",nullable=false)
     private boolean nuevo;
