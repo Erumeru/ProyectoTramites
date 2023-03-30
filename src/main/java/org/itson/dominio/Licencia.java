@@ -22,18 +22,35 @@ public class Licencia implements Serializable {
     @Column(name = "vigencia", nullable = false)
     private Integer vigencia;
 
+    @OneToOne(mappedBy="TramiteLicencia")
+    private TramiteLicencia tramiteLicencia;
+    
+    
     public Licencia() {
     }
 
     public Licencia(Long id, Integer vigencia) {
         this.id = id;
         this.vigencia = vigencia;
+
     }
 
     public Licencia(Integer vigencia) {
         this.vigencia = vigencia;
     }
 
+    public Licencia(Long id, Integer vigencia, TramiteLicencia tramiteLicencia) {
+        this.id = id;
+        this.vigencia = vigencia;
+        this.tramiteLicencia = tramiteLicencia;
+    }
+
+    public Licencia(Integer vigencia, TramiteLicencia tramiteLicencia) {
+        this.vigencia = vigencia;
+        this.tramiteLicencia = tramiteLicencia;
+    }
+
+    
     public Long getId() {
         return id;
     }
@@ -49,6 +66,7 @@ public class Licencia implements Serializable {
     public void setVigencia(Integer vigencia) {
         this.vigencia = vigencia;
     }
+    
     
     @Override
     public int hashCode() {
