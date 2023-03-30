@@ -6,6 +6,7 @@ package org.itson.dominio;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.List;
 import javax.persistence.*;
 
 /**
@@ -43,6 +44,9 @@ public class Persona implements Serializable {
     @Column(name = "apellido_materno", nullable = false, length = 30)
     private String apellido_materno;
 
+    @OneToMany(mappedBy = "persona")
+    private List<Tramite> tramites;
+    
     public Persona() {
     }
 
@@ -129,6 +133,14 @@ public class Persona implements Serializable {
 
     public void setApellido_materno(String apellido_materno) {
         this.apellido_materno = apellido_materno;
+    }
+
+    public List<Tramite> getTramites() {
+        return tramites;
+    }
+
+    public void setTramites(List<Tramite> tramites) {
+        this.tramites = tramites;
     }
     
     @Override

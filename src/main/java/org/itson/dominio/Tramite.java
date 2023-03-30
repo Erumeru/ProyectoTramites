@@ -14,7 +14,6 @@ import javax.persistence.*;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
-@Table(name="Tramites")
 public class Tramite implements Serializable {
 
     @Id
@@ -29,6 +28,10 @@ public class Tramite implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar fechaExpedicion;
     
+    @ManyToOne
+    @JoinColumn(name = "idPersona", nullable = false)
+    private Persona persona;
+    
     public Tramite(Long id, int costo, Calendar fechaExpedicion) {
         this.id = id;
         this.costo = costo;
@@ -41,6 +44,12 @@ public class Tramite implements Serializable {
     public Tramite(int costo, Calendar fechaExpedicion) {
         this.costo = costo;
         this.fechaExpedicion = fechaExpedicion;
+    }
+
+    public Tramite(int costo, Calendar fechaExpedicion, Persona persona) {
+        this.costo = costo;
+        this.fechaExpedicion = fechaExpedicion;
+        this.persona = persona;
     }
     
     public Long getId() {
@@ -65,6 +74,14 @@ public class Tramite implements Serializable {
 
     public void setFechaExpedicion(Calendar fechaExpedicion) {
         this.fechaExpedicion = fechaExpedicion;
+    }
+
+    public Persona getPersona() {
+        return persona;
+    }
+
+    public void setPersona(Persona persona) {
+        this.persona = persona;
     }
 
     @Override

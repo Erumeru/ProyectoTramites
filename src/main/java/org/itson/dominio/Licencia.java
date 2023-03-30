@@ -25,7 +25,6 @@ public class Licencia implements Serializable {
     @OneToOne(mappedBy="TramiteLicencia")
     private TramiteLicencia tramiteLicencia;
     
-    
     public Licencia() {
     }
 
