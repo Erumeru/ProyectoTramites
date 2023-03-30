@@ -14,13 +14,12 @@ import javax.persistence.Table;
 
 /**
  *
- * @author eruma
+ * @author 233133_233259
  */
 @Entity
 @Table(name="autos")
 public class Auto implements Serializable {
 
-    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
@@ -63,10 +62,6 @@ public class Auto implements Serializable {
         this.linea = linea;
         this.marca = marca;
         this.nuevo = nuevo;
-    }
-
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
     }
 
     public String getModelo() {
