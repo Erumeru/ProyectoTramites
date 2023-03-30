@@ -6,25 +6,17 @@ package org.itson.dominio;
 
 import java.io.Serializable;
 import java.util.Calendar;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  *
- * @author eruma
+ * @author 233133_233259
  */
 @Entity
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
-@Table(name="Tramite")
+@Table(name="Tramites")
 public class Tramite implements Serializable {
 
-    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id", nullable=false)
@@ -34,16 +26,9 @@ public class Tramite implements Serializable {
     private int costo;
     
     @Column(name="fechaExpedicion", nullable=false)
+    @Temporal(TemporalType.TIMESTAMP)
     private Calendar fechaExpedicion;
     
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Tramite(Long id, int costo, Calendar fechaExpedicion) {
         this.id = id;
         this.costo = costo;
@@ -56,6 +41,14 @@ public class Tramite implements Serializable {
     public Tramite(int costo, Calendar fechaExpedicion) {
         this.costo = costo;
         this.fechaExpedicion = fechaExpedicion;
+    }
+    
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public int getCosto() {
@@ -74,8 +67,6 @@ public class Tramite implements Serializable {
         this.fechaExpedicion = fechaExpedicion;
     }
 
-    
-    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -98,7 +89,9 @@ public class Tramite implements Serializable {
 
     @Override
     public String toString() {
-        return "org.itson.dominio.TramitePlacas[ id=" + id + " ]";
+        return "Tramite{" + "id=" + id + ", costo=" + costo + '}';
     }
+
+    
     
 }

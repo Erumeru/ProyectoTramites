@@ -5,11 +5,14 @@
 package org.itson.dominio;
 
 import java.io.Serializable;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -37,6 +40,9 @@ public class Auto implements Serializable {
     private String marca;
     @Column(name="nuevo",nullable=false)
     private boolean nuevo;
+    
+    @OneToMany(mappedBy = "automovil", cascade = {CascadeType.PERSIST})
+    private List<Placa> placas;
 
     public Auto(Long id, String modelo, String color, String numSerie, String linea, String marca, boolean nuevo) {
         this.id = id;
