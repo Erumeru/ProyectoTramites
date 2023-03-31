@@ -5,19 +5,36 @@
 
 package ui;
 
+import implementaciones.PersonaDAO;
+import java.util.List;
+import javax.swing.plaf.PanelUI;
+import javax.swing.table.DefaultTableModel;
+import org.itson.dominio.Persona;
 
 /**
  *
  * @author eruma
  */
 public class SelectPersona extends javax.swing.JFrame {
-
+    private PersonaDAO persona = new PersonaDAO();
     /** Creates new form SelectPersona */
     public SelectPersona() {
-        initComponents();
-
+        initComponents();        
+        this.cargarPersonas();
+        
     }
 
+    
+    private void cargarPersonas(){
+            DefaultTableModel modeloTabla = (DefaultTableModel) this.tblPersonas.getModel();
+            List<Persona> listaPersonas=persona.consultarPersonas();
+            for (int i=0; i<=listaPersonas.size(); i++){
+                Object[] fila = {listaPersonas.get(i).getNombres(), listaPersonas.get(i).getApellido_paterno(),
+                    listaPersonas.get(i).getApellido_materno(),listaPersonas.get(i).getRfc(),listaPersonas.get(i).getFecha_nacimiento()};
+                modeloTabla.addRow(fila);
+                System.out.println(listaPersonas.get(i));
+            }
+    }
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -29,6 +46,9 @@ public class SelectPersona extends javax.swing.JFrame {
 
         dateTimePicker1 = new com.github.lgooddatepicker.components.DateTimePicker();
         jPanel1 = new javax.swing.JPanel();
+        DpFecha = new com.github.lgooddatepicker.components.DatePicker();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblPersonas = new javax.swing.JTable();
         btnCancel = new javax.swing.JButton();
         btnSig = new javax.swing.JButton();
         txtFieldNombre = new javax.swing.JTextField();
@@ -41,6 +61,56 @@ public class SelectPersona extends javax.swing.JFrame {
         setResizable(false);
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        jPanel1.add(DpFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 210, 260, 30));
+
+        tblPersonas.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Nombre", "Ap. Paterno", "Ap. Materno", "RFC", "F.Nacimiento"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tblPersonas);
+        if (tblPersonas.getColumnModel().getColumnCount() > 0) {
+            tblPersonas.getColumnModel().getColumn(0).setPreferredWidth(12);
+        }
+
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 280, 740, 280));
 
         btnCancel.setForeground(new java.awt.Color(51, 51, 51));
         btnCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgSelectPersona/btnCancel.png"))); // NOI18N
@@ -246,12 +316,15 @@ public class SelectPersona extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.github.lgooddatepicker.components.DatePicker DpFecha;
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnSig;
     private com.github.lgooddatepicker.components.DateTimePicker dateTimePicker1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblFondo;
     private javax.swing.JLabel lblRenglon;
+    private javax.swing.JTable tblPersonas;
     private javax.swing.JTextField txtFieldNombre;
     private javax.swing.JTextField txtFieldRFC;
     // End of variables declaration//GEN-END:variables
