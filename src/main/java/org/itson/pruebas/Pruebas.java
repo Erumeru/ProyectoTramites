@@ -4,7 +4,9 @@
  */
 package org.itson.pruebas;
 
+import implementaciones.PersonaDAO;
 import java.util.GregorianCalendar;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -27,6 +29,7 @@ public class Pruebas {
         EntityManager entityManager = emFactory.createEntityManager();
         
         entityManager.getTransaction().begin();
+        
         
         Persona persona = new Persona(false, new GregorianCalendar(), "123456", "DASDM355123", "Mario", "Diaz", "Padilla");
         TramitePlacas tramite = new TramitePlacas(100, new GregorianCalendar(), persona);

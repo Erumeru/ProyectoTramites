@@ -5,7 +5,9 @@
 
 package ui;
 
+import implementaciones.ConexionBD;
 import implementaciones.PersonaDAO;
+import interfaces.IConexionBD;
 import java.util.List;
 import javax.swing.plaf.PanelUI;
 import javax.swing.table.DefaultTableModel;
@@ -16,10 +18,15 @@ import org.itson.dominio.Persona;
  * @author eruma
  */
 public class SelectPersona extends javax.swing.JFrame {
-    private PersonaDAO persona = new PersonaDAO();
+    
+    private IConexionBD conexion = new ConexionBD("org.itson_Proyecto2BDA");
+    private PersonaDAO persona;
+    
+    
     /** Creates new form SelectPersona */
     public SelectPersona() {
-        initComponents();        
+        initComponents();       
+        persona = new PersonaDAO(conexion.crearConexion());
         this.cargarPersonas();
         
     }
@@ -28,7 +35,7 @@ public class SelectPersona extends javax.swing.JFrame {
     private void cargarPersonas(){
             DefaultTableModel modeloTabla = (DefaultTableModel) this.tblPersonas.getModel();
             List<Persona> listaPersonas=persona.consultarPersonas();
-            for (int i=0; i<=listaPersonas.size(); i++){
+            for (int i=0; i<listaPersonas.size(); i++){
                 Object[] fila = {listaPersonas.get(i).getNombres(), listaPersonas.get(i).getApellido_paterno(),
                     listaPersonas.get(i).getApellido_materno(),listaPersonas.get(i).getRfc(),listaPersonas.get(i).getFecha_nacimiento()};
                 modeloTabla.addRow(fila);
@@ -57,7 +64,6 @@ public class SelectPersona extends javax.swing.JFrame {
         lblFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1200, 800));
         setResizable(false);
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -158,10 +164,10 @@ public class SelectPersona extends javax.swing.JFrame {
         });
         jPanel1.add(txtFieldNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 178, 350, -1));
 
-        txtFieldRFC.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
-        txtFieldRFC.setForeground(new java.awt.Color(153, 153, 153));
         txtFieldRFC.setText("Ingrese su RFC");
         txtFieldRFC.setBorder(null);
+        txtFieldRFC.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
+        txtFieldRFC.setForeground(new java.awt.Color(153, 153, 153));
         txtFieldRFC.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 txtFieldRFCFocusLost(evt);

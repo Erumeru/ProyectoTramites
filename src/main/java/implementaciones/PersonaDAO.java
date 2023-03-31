@@ -18,12 +18,18 @@ import org.itson.dominio.Persona;
  */
 public class PersonaDAO implements IPersonaDAO {
 
+    private final EntityManager entityManager;
+
+    public PersonaDAO(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+    
     @Override
     public List<Persona> consultarPersonas() {
         EntityManagerFactory emFactory = Persistence.createEntityManagerFactory("org.itson_Proyecto2BDA");
         EntityManager entityManager = emFactory.createEntityManager();
        
-        String query = "SELECT p.nombres FROM person as p";
+        String query = "SELECT p FROM Persona as p";
         TypedQuery<Persona> result=entityManager.createQuery(query, Persona.class);
         List<Persona> listPersonas = result.getResultList();
         entityManager.close();
