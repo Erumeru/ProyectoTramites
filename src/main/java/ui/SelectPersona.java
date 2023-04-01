@@ -7,10 +7,14 @@ package ui;
 import implementaciones.ConexionBD;
 import implementaciones.PersonaDAO;
 import interfaces.IConexionBD;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.List;
 import javax.swing.plaf.PanelUI;
 import javax.swing.table.DefaultTableModel;
 import org.itson.dominio.Persona;
+import utilidades.ConstantesGUI;
+import utilidades.ParametrosBusquedaPersonas;
 
 /**
  *
@@ -20,36 +24,39 @@ public class SelectPersona extends javax.swing.JFrame {
 
     private IConexionBD conexion = new ConexionBD("org.itson_Proyecto2BDA");
     private PersonaDAO persona;
+    private ConstantesGUI operacion;
 
     /**
      * Creates new form SelectPersona
      */
-    public SelectPersona() {
+    public SelectPersona(IConexionBD conexion, ConstantesGUI gui) {
         initComponents();
-        persona = new PersonaDAO(conexion.crearConexion());
+        this.persona = new PersonaDAO(conexion.crearConexion());
+        this.operacion = gui;
         this.cargarPersonas();
-
     }
 
     private void cargarPersonas() {
+        SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
         DefaultTableModel modeloTabla = (DefaultTableModel) this.tblPersonas.getModel();
         modeloTabla.setRowCount(0);
-        if (this.txtFieldNombre.getText().equalsIgnoreCase("Ingrese su Nombre") && this.txtFieldRFC.getText().equalsIgnoreCase("Ingrese su RFC") && this.DpFecha.getDate()==null) {
+        if (this.txtFieldNombre.getText().equalsIgnoreCase("Ingrese su Nombre") && this.txtFieldRFC.getText().equalsIgnoreCase("Ingrese su RFC") && this.DpFecha.getDate() == null) {
             List<Persona> listaPersonas = persona.cargarTodasPersonas();
             for (int i = 0; i < listaPersonas.size(); i++) {
                 if (listaPersonas.get(i) != null) {
                     Object[] fila = {listaPersonas.get(i).getNombres(), listaPersonas.get(i).getApellido_paterno(),
-                        listaPersonas.get(i).getApellido_materno(), listaPersonas.get(i).getRfc(), listaPersonas.get(i).getFecha_nacimiento()};
+                        listaPersonas.get(i).getApellido_materno(), listaPersonas.get(i).getRfc(), formateador.format((listaPersonas.get(i).getFecha_nacimiento()).getTime())};
                     modeloTabla.addRow(fila);
                     System.out.println(listaPersonas.get(i));
                 }
             }
         } else {
-            List<Persona> listaPersonas = persona.consultarPersonas(this.txtFieldRFC.getText(), this.txtFieldNombre.getText(), this.DpFecha.getDate());
+            ParametrosBusquedaPersonas parametros = new ParametrosBusquedaPersonas(this.txtFieldRFC.getText(), this.txtFieldNombre.getText(), this.DpFecha.getDate());
+            List<Persona> listaPersonas = persona.consultarPersonas(parametros);
             for (int i = 0; i < listaPersonas.size(); i++) {
                 if (listaPersonas.get(i) != null) {
                     Object[] fila = {listaPersonas.get(i).getNombres(), listaPersonas.get(i).getApellido_paterno(),
-                        listaPersonas.get(i).getApellido_materno(), listaPersonas.get(i).getRfc(), listaPersonas.get(i).getFecha_nacimiento()};
+                        listaPersonas.get(i).getApellido_materno(), listaPersonas.get(i).getRfc(), formateador.format((listaPersonas.get(i).getFecha_nacimiento()).getTime())};
                     modeloTabla.addRow(fila);
                     System.out.println(listaPersonas.get(i));
                 }
@@ -57,6 +64,36 @@ public class SelectPersona extends javax.swing.JFrame {
         }
     }
 
+    private void abrirMenuPrincipal() {
+        if (this.isVisible()) {
+            new SelectTramite(conexion).setVisible(true);
+            this.setVisible(false);
+        }
+    }
+
+    private void siguiente(){
+        Integer indiceRenglonInicial = 0, indiceColumnaRFC = 3;
+        if (this.tblPersonas.getSelectedRow() >= indiceRenglonInicial) {
+
+            if (this.operacion == ConstantesGUI.LICENCIAS) {
+                String rfcPersonaSeleccionada = (String) this.tblPersonas.getModel().getValueAt(this.tblPersonas.getSelectedRow(), indiceColumnaRFC);
+
+                if(persona.consultarLicenciaVigentePersona(rfcPersonaSeleccionada)){
+                    System.out.printf("La persona con el rfc %s cuenta con una licencia vigente\n", rfcPersonaSeleccionada);
+                    System.out.println("Regresar al inicio o dejar en la misma pantalla ya que no se puede registrar licencia para esta persona");
+                }else{
+                    System.out.printf("La persona con el rfc %s no cuenta con una licencia vigente\n", rfcPersonaSeleccionada);
+                    System.out.println("Continuar con el proceso para tramitar licencia");
+                }
+            } else if (this.operacion == ConstantesGUI.PLACAS) {
+                System.out.println("En desarrollo");
+            } else {
+                System.out.println("Operación inválida");
+            }
+
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -127,11 +164,16 @@ public class SelectPersona extends javax.swing.JFrame {
         });
         jPanel1.add(btnSig1, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 130, -1, -1));
 
-        btnCancel.setForeground(new java.awt.Color(51, 51, 51));
         btnCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgSelectPersona/btnCancel.png"))); // NOI18N
         btnCancel.setBorder(null);
         btnCancel.setBorderPainted(false);
         btnCancel.setContentAreaFilled(false);
+        btnCancel.setForeground(new java.awt.Color(51, 51, 51));
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnCancel, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 590, -1, -1));
 
         btnSig.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgSelectPersona/btnSig.png"))); // NOI18N
@@ -139,6 +181,11 @@ public class SelectPersona extends javax.swing.JFrame {
         btnSig.setBorderPainted(false);
         btnSig.setContentAreaFilled(false);
         btnSig.setForeground(new java.awt.Color(51, 51, 51));
+        btnSig.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSigActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnSig, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 590, -1, -1));
 
         txtFieldNombre.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
@@ -299,40 +346,14 @@ public class SelectPersona extends javax.swing.JFrame {
         this.cargarPersonas();
     }//GEN-LAST:event_btnSig1ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SelectPersona.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SelectPersona.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SelectPersona.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SelectPersona.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        abrirMenuPrincipal();
+    }//GEN-LAST:event_btnCancelActionPerformed
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new SelectPersona().setVisible(true);
-            }
-        });
-    }
+    private void btnSigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSigActionPerformed
+        siguiente();
+    }//GEN-LAST:event_btnSigActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.github.lgooddatepicker.components.DatePicker DpFecha;

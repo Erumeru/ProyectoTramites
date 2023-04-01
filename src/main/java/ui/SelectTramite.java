@@ -4,17 +4,31 @@
  */
 package ui;
 
+import interfaces.IConexionBD;
+import javax.persistence.EntityManager;
+import utilidades.ConstantesGUI;
+
 /**
  *
  * @author eruma
  */
 public class SelectTramite extends javax.swing.JFrame {
 
+    private IConexionBD conexion;
+
     /**
      * Creates new form SelectTramite
      */
-    public SelectTramite() {
+    public SelectTramite(IConexionBD conexion) {
         initComponents();
+        this.conexion = conexion;
+    }
+
+    private void abrirBuscadorPersonas(ConstantesGUI gui) {
+        if (this.isVisible()) {
+            new SelectPersona(conexion, gui).setVisible(true);
+            this.setVisible(false);
+        }
     }
 
     /**
@@ -44,6 +58,11 @@ public class SelectTramite extends javax.swing.JFrame {
         btnPlacas.setBorder(null);
         btnPlacas.setBorderPainted(false);
         btnPlacas.setContentAreaFilled(false);
+        btnPlacas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPlacasActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnPlacas, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 460, -1, -1));
 
         btnLicencias.setForeground(new java.awt.Color(51, 51, 51));
@@ -51,6 +70,11 @@ public class SelectTramite extends javax.swing.JFrame {
         btnLicencias.setBorder(null);
         btnLicencias.setBorderPainted(false);
         btnLicencias.setContentAreaFilled(false);
+        btnLicencias.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLicenciasActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnLicencias, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 460, -1, -1));
 
         btnUserHistorial.setForeground(new java.awt.Color(51, 51, 51));
@@ -88,40 +112,13 @@ public class SelectTramite extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SelectTramite.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SelectTramite.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SelectTramite.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SelectTramite.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void btnLicenciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLicenciasActionPerformed
+        abrirBuscadorPersonas(ConstantesGUI.LICENCIAS);
+    }//GEN-LAST:event_btnLicenciasActionPerformed
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new SelectTramite().setVisible(true);
-            }
-        });
-    }
+    private void btnPlacasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlacasActionPerformed
+        abrirBuscadorPersonas(ConstantesGUI.PLACAS);
+    }//GEN-LAST:event_btnPlacasActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddUser;

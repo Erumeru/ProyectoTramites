@@ -7,6 +7,7 @@ package interfaces;
 import java.time.LocalDate;
 import java.util.List;
 import org.itson.dominio.Persona;
+import utilidades.ParametrosBusquedaPersonas;
 
 /**
  *
@@ -14,6 +15,7 @@ import org.itson.dominio.Persona;
  */
 public interface IPersonaDAO {
     
-    List <Persona> consultarPersonas(String rfc, String nombre, LocalDate fecha);
+    List <Persona> consultarPersonas(ParametrosBusquedaPersonas parametros);
     List<Persona> cargarTodasPersonas();
+    boolean consultarLicenciaVigentePersona(String rfc);
 }
