@@ -18,4 +18,5 @@ public interface IPersonaDAO {
     List <Persona> consultarPersonas(ParametrosBusquedaPersonas parametros);
     List<Persona> cargarTodasPersonas();
     boolean consultarLicenciaVigentePersona(String rfc);
+    boolean insercionMasivaPersonas();
 }

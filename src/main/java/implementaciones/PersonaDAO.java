@@ -79,11 +79,10 @@ public class PersonaDAO implements IPersonaDAO {
 
         String nombre = parametros.getNombre(), rfc = parametros.getRfc();
         LocalDate fecha = parametros.getFecha();
-        
+
         Calendar fechaActual = Calendar.getInstance();
-        fechaActual.set(fecha.getYear(), fecha.getMonthValue()-1, fecha.getDayOfMonth());
-        
-        
+        fechaActual.set(fecha.getYear(), fecha.getMonthValue() - 1, fecha.getDayOfMonth());
+
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Persona> criteriaQuery = criteriaBuilder.createQuery(Persona.class);
         Root<Persona> personaRoot = criteriaQuery.from(Persona.class);
@@ -107,6 +106,7 @@ public class PersonaDAO implements IPersonaDAO {
         return query.getResultList();
     }
 
+    @Override
     public List<Persona> cargarTodasPersonas() {
         String query = "SELECT p FROM Persona as p";
         TypedQuery<Persona> result = entityManager.createQuery(query, Persona.class);
@@ -116,6 +116,7 @@ public class PersonaDAO implements IPersonaDAO {
         return listPersonas;
     }
 
+    @Override
     public boolean consultarLicenciaVigentePersona(String rfc) {
         //Funciona pero falta implementar la comprobación de la vigencia en la sentencia jpql
         String jpql = "SELECT tl FROM TramiteLicencia tl "
@@ -139,6 +140,52 @@ public class PersonaDAO implements IPersonaDAO {
             GregorianCalendar actual = new GregorianCalendar();
 
             return !actual.after(fechaVigencia);
+        }
+    }
+
+    @Override
+    public boolean insercionMasivaPersonas() {
+        if (cargarTodasPersonas().size() >= 15) {
+            return false;
+        } else {
+            String[] nombres = {"Ana", "Luis", "Miguel", "Sofía", "Diego", "Valentina", "Jorge", "Gabriela", "Roberto", "María", "Carmen", "Juan", "Carla", "Francisco", "Alejandra", "Pablo", "Lucía", "Andrés", "Mariana", "Fernando"};
+            String[] apellidosPaternos = {"García", "González", "Hernández", "Martínez", "López", "Pérez", "Gómez", "Díaz", "Ruiz", "Flores", "Ramírez", "Sánchez", "Torres", "Reyes", "Mendoza", "Castro", "Ortiz", "Chávez", "Vargas", "Aguilar"};
+            String[] apellidosMaternos = {"Ramírez", "Hernández", "García", "Torres", "Martínez", "Sánchez", "González", "Castillo", "Fernández", "Chávez", "Gómez", "Mendoza", "Pérez", "Díaz", "Herrera", "Vázquez", "Ramos", "López", "Soto", "Sosa"};
+            String[] rfcs = {"ABC12345678901", "DEF23456789012", "GHI34567890123", "JKL45678901234", "MNO56789012345", "PQR67890123456", "STU78901234567", "VWX89012345678", "YZA90123456789", "BCD01234567890", "EFG12345678901", "HIJ23456789012", "KLM34567890123", "NOP45678901234", "QRS56789012345", "TUV67890123456", "WXY78901234567", "ZAB89012345678", "CDE90123456789", "FGH01234567890"};
+            String[] telefonos = {"6441100001", "6441200002", "6441300003", "6441400004", "6441500005", "6441600006", "6441700007", "6441800008", "6441900009", "6442100010", "6442200011", "6442300012", "6442400013", "6442500014", "6442600015", "6442700016", "6442800017", "6442900018", "6443100019", "6443200020"};
+
+            GregorianCalendar[] fechasDeNacimiento = new GregorianCalendar[20];
+
+            fechasDeNacimiento[0] = new GregorianCalendar(1990, 3, 22);
+            fechasDeNacimiento[1] = new GregorianCalendar(1985, 11, 10);
+            fechasDeNacimiento[2] = new GregorianCalendar(1992, 8, 5);
+            fechasDeNacimiento[3] = new GregorianCalendar(1988, 5, 28);
+            fechasDeNacimiento[4] = new GregorianCalendar(1995, 0, 15);
+            fechasDeNacimiento[5] = new GregorianCalendar(1991, 10, 2);
+            fechasDeNacimiento[6] = new GregorianCalendar(1997, 6, 18);
+            fechasDeNacimiento[7] = new GregorianCalendar(1984, 2, 30);
+            fechasDeNacimiento[8] = new GregorianCalendar(1993, 4, 8);
+            fechasDeNacimiento[9] = new GregorianCalendar(1999, 1, 14);
+
+            fechasDeNacimiento[10] = new GregorianCalendar(2006, 7, 1);
+            fechasDeNacimiento[11] = new GregorianCalendar(2002, 3, 11);
+            fechasDeNacimiento[12] = new GregorianCalendar(2009, 11, 24);
+            fechasDeNacimiento[13] = new GregorianCalendar(2010, 6, 7);
+            fechasDeNacimiento[14] = new GregorianCalendar(2012, 1, 16);
+            fechasDeNacimiento[15] = new GregorianCalendar(2014, 8, 28);
+            fechasDeNacimiento[16] = new GregorianCalendar(2015, 4, 10);
+            fechasDeNacimiento[17] = new GregorianCalendar(2016, 2, 2);
+            fechasDeNacimiento[18] = new GregorianCalendar(2017, 9, 19);
+            fechasDeNacimiento[19] = new GregorianCalendar(2018, 7, 3);
+
+            entityManager.getTransaction().begin();
+            for (int i = 0; i < 20; i++) {
+                boolean discapacitado = (i % 2 == 0 ? false : true);
+                Persona persona = new Persona(discapacitado, fechasDeNacimiento[i], telefonos[i], rfcs[i], nombres[i], apellidosPaternos[i], apellidosMaternos[i]);
+                entityManager.persist(persona);
+            }
+            entityManager.getTransaction().commit();
+            return true;
         }
     }
 }

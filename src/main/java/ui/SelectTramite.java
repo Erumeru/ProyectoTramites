@@ -4,8 +4,12 @@
  */
 package ui;
 
+import implementaciones.PersonaDAO;
 import interfaces.IConexionBD;
+import interfaces.IPersonaDAO;
 import javax.persistence.EntityManager;
+import javax.swing.JOptionPane;
+import org.itson.dominio.Persona;
 import utilidades.ConstantesGUI;
 
 /**
@@ -15,13 +19,15 @@ import utilidades.ConstantesGUI;
 public class SelectTramite extends javax.swing.JFrame {
 
     private IConexionBD conexion;
-
+    private IPersonaDAO personaDAO;
+    
     /**
      * Creates new form SelectTramite
      */
     public SelectTramite(IConexionBD conexion) {
         initComponents();
         this.conexion = conexion;
+        this.personaDAO = new PersonaDAO(this.conexion.crearConexion());
     }
 
     private void abrirBuscadorPersonas(ConstantesGUI gui) {
@@ -29,6 +35,10 @@ public class SelectTramite extends javax.swing.JFrame {
             new SelectPersona(conexion, gui).setVisible(true);
             this.setVisible(false);
         }
+    }
+    
+    private void mostrarMensajePantalla(String msj) {
+        JOptionPane.showMessageDialog(null, msj, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
@@ -89,6 +99,11 @@ public class SelectTramite extends javax.swing.JFrame {
         btnAddUser.setBorder(null);
         btnAddUser.setBorderPainted(false);
         btnAddUser.setContentAreaFilled(false);
+        btnAddUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddUserActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnAddUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 570, -1, -1));
 
         lblAddCuentas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgSelectTramite/lblAgregarCuentas.png"))); // NOI18N
@@ -119,6 +134,15 @@ public class SelectTramite extends javax.swing.JFrame {
     private void btnPlacasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlacasActionPerformed
         abrirBuscadorPersonas(ConstantesGUI.PLACAS);
     }//GEN-LAST:event_btnPlacasActionPerformed
+
+    private void btnAddUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddUserActionPerformed
+        if(personaDAO.insercionMasivaPersonas()){
+            mostrarMensajePantalla("Se han insertado 20 registros de Personas para pruebas");
+        }else{
+            mostrarMensajePantalla("Ya hay suficientes registros para pruebas");
+        }
+        
+    }//GEN-LAST:event_btnAddUserActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddUser;
