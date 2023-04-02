@@ -19,4 +19,6 @@ public interface IPersonaDAO {
     List<Persona> cargarTodasPersonas();
     boolean consultarLicenciaVigentePersona(String rfc);
     boolean insercionMasivaPersonas();
+    boolean validarMayoriaEdadPersona(String rfc);
+    Persona consultarPersona(String rfc);
 }

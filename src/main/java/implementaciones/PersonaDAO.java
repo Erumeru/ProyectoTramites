@@ -40,6 +40,15 @@ public class PersonaDAO implements IPersonaDAO {
         this.entityManager = entityManager;
     }
 
+    public Persona consultarPersona(String rfc){
+        String jpql = "SELECT ps FROM Persona ps WHERE ps.rfc = :rfc";
+        TypedQuery<Persona> query = entityManager.createQuery(jpql, Persona.class);
+        query.setParameter("rfc", rfc);
+        query.setMaxResults(1);
+
+        return query.getSingleResult();
+    }
+    
     @Override
     public List<Persona> consultarPersonas(ParametrosBusquedaPersonas parametros) {
         /*
@@ -80,22 +89,21 @@ public class PersonaDAO implements IPersonaDAO {
         String nombre = parametros.getNombre(), rfc = parametros.getRfc();
         LocalDate fecha = parametros.getFecha();
 
-        Calendar fechaActual = Calendar.getInstance();
-        fechaActual.set(fecha.getYear(), fecha.getMonthValue() - 1, fecha.getDayOfMonth());
-
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Persona> criteriaQuery = criteriaBuilder.createQuery(Persona.class);
         Root<Persona> personaRoot = criteriaQuery.from(Persona.class);
 
         List<Predicate> filtros = new LinkedList<>();
 
-        if (!nombre.equalsIgnoreCase("Ingrese su Nombre")) {
+        if (!nombre.equalsIgnoreCase("Ingrese su Nombre") && !nombre.equals("")) {
             filtros.add(criteriaBuilder.like(personaRoot.get("nombres"), "%" + nombre + "%"));
         }
-        if (!rfc.equalsIgnoreCase("Ingrese su RFC")) {
+        if (!rfc.equalsIgnoreCase("Ingrese su RFC") && !nombre.equals("")) {
             filtros.add(criteriaBuilder.like(personaRoot.get("rfc"), rfc));
         }
         if (fecha != null) {
+            Calendar fechaActual = Calendar.getInstance();
+            fechaActual.set(fecha.getYear(), fecha.getMonthValue() - 1, fecha.getDayOfMonth());
             filtros.add(criteriaBuilder.equal(personaRoot.get("fecha_nacimiento"), fechaActual));
         }
 
@@ -186,6 +194,25 @@ public class PersonaDAO implements IPersonaDAO {
             }
             entityManager.getTransaction().commit();
             return true;
+        }
+    }
+
+    @Override
+    public boolean validarMayoriaEdadPersona(String rfc) {
+        Persona persona = this.consultarPersona(rfc);
+        Calendar fechaNacimiento = persona.getFecha_nacimiento();
+        
+        if (persona != null) {
+            Calendar fechaCumpleMayoriaEdad = Calendar.getInstance();
+            fechaCumpleMayoriaEdad.setTime(fechaNacimiento.getTime());
+            fechaCumpleMayoriaEdad.add(Calendar.YEAR, 18);
+            
+            Calendar fechaActual = Calendar.getInstance();
+            
+            return !fechaActual.before(fechaCumpleMayoriaEdad);
+        } else {
+            System.out.println("Error al buscar la persona");
+            return false;
         }
     }
 }

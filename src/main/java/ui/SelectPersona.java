@@ -31,6 +31,7 @@ public class SelectPersona extends javax.swing.JFrame {
      */
     public SelectPersona(IConexionBD conexion, ConstantesGUI gui) {
         initComponents();
+        this.setLocationRelativeTo(null);
         this.persona = new PersonaDAO(conexion.crearConexion());
         this.operacion = gui;
         this.cargarPersonas();
@@ -78,12 +79,21 @@ public class SelectPersona extends javax.swing.JFrame {
             if (this.operacion == ConstantesGUI.LICENCIAS) {
                 String rfcPersonaSeleccionada = (String) this.tblPersonas.getModel().getValueAt(this.tblPersonas.getSelectedRow(), indiceColumnaRFC);
 
-                if(persona.consultarLicenciaVigentePersona(rfcPersonaSeleccionada)){
-                    System.out.printf("La persona con el rfc %s cuenta con una licencia vigente\n", rfcPersonaSeleccionada);
-                    System.out.println("Regresar al inicio o dejar en la misma pantalla ya que no se puede registrar licencia para esta persona");
+                boolean vigencia = persona.consultarLicenciaVigentePersona(rfcPersonaSeleccionada),
+                        mayoriaEdad = persona.validarMayoriaEdadPersona(rfcPersonaSeleccionada);
+                
+                if(vigencia&&mayoriaEdad){
+                    System.out.printf("La persona con el rfc %s cuenta con una licencia vigente y es mayor de edad\n", rfcPersonaSeleccionada);
+                    System.out.println("Regresar al inicio o dejar en la misma pantalla ya que no se puede registrar licencia para esta persona debido a que ya cuenta con una vigente");
+                }else if(!vigencia&&mayoriaEdad){
+                    System.out.printf("La persona con el rfc %s no cuenta con una licencia vigente y es mayor de edad\n", rfcPersonaSeleccionada);
+                    System.out.println("Cuenta con los requisitos para continuar con el proceso para tramitar licencia");
+                }else if(!vigencia&&!mayoriaEdad){
+                    System.out.printf("La persona con el rfc %s no cuenta con una licencia vigente y no es mayor de edad\n", rfcPersonaSeleccionada);
+                    System.out.println("Regresar al inicio o dejar en la misma pantalla ya que no se puede registrar licencia para esta persona ya que no es mayor de edad");
                 }else{
-                    System.out.printf("La persona con el rfc %s no cuenta con una licencia vigente\n", rfcPersonaSeleccionada);
-                    System.out.println("Continuar con el proceso para tramitar licencia");
+                    System.out.printf("La persona con el rfc %s cuenta con una licencia vigente y no es mayor de edad\n", rfcPersonaSeleccionada);
+                    System.out.println("Validar la informacion para verificar si esta persona menor de edad cuenta con una licencia ya que no es posible");
                 }
             } else if (this.operacion == ConstantesGUI.PLACAS) {
                 System.out.println("En desarrollo");
