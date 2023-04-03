@@ -4,6 +4,7 @@
  */
 package org.itson.dominio;
 
+import criptografia.EncriptadorAES;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
@@ -35,17 +36,31 @@ public class Persona implements Serializable {
     @Column(name = "rfc", nullable = false, length = 15)
     private String rfc;
     
-    @Column(name = "nombres", nullable = false, length = 40)
+    @Column(name = "nombres", nullable = false, length = 64)
     private String nombres;
     
-    @Column(name = "apellido_paterno", nullable = false, length = 30)
+    @Column(name = "apellido_paterno", nullable = false, length = 64)
     private String apellido_paterno;
     
-    @Column(name = "apellido_materno", nullable = false, length = 30)
+    @Column(name = "apellido_materno", nullable = false, length = 64)
     private String apellido_materno;
 
     @OneToMany(mappedBy = "persona")
     private List<Tramite> tramites;
+    
+    @PrePersist
+    private void encriptarNombreCompleto(){
+        this.nombres = EncriptadorAES.convertirColumnaBD(this.nombres);
+        this.apellido_paterno = EncriptadorAES.convertirColumnaBD(this.apellido_paterno);
+        this.apellido_materno = EncriptadorAES.convertirColumnaBD(this.apellido_materno);
+    }
+    
+    @PostLoad
+    private void desencriptarNombreCompleto(){
+        this.nombres = EncriptadorAES.convertirAtributoEntidad(this.nombres);
+        this.apellido_paterno = EncriptadorAES.convertirAtributoEntidad(this.apellido_paterno);
+        this.apellido_materno = EncriptadorAES.convertirAtributoEntidad(this.apellido_materno);
+    }
     
     public Persona() {
     }
