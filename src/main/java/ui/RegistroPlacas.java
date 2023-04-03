@@ -35,7 +35,6 @@ public class RegistroPlacas extends javax.swing.JFrame {
         lblFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1200, 800));
         setResizable(false);
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -52,6 +51,7 @@ public class RegistroPlacas extends javax.swing.JFrame {
         });
         jPanel1.add(btnOk, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 572, -1, -1));
 
+        txtFieldPlacaAnt.setEditable(false);
         txtFieldPlacaAnt.setFont(new java.awt.Font("Segoe UI", 2, 16)); // NOI18N
         txtFieldPlacaAnt.setForeground(new java.awt.Color(153, 153, 153));
         txtFieldPlacaAnt.setBorder(null);
@@ -83,6 +83,7 @@ public class RegistroPlacas extends javax.swing.JFrame {
         });
         jPanel1.add(txtFieldPlacaAnt, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 170, 310, 30));
 
+        txtFieldPlacaNueva.setEditable(false);
         txtFieldPlacaNueva.setFont(new java.awt.Font("Segoe UI", 2, 16)); // NOI18N
         txtFieldPlacaNueva.setForeground(new java.awt.Color(153, 153, 153));
         txtFieldPlacaNueva.setBorder(null);
@@ -114,6 +115,7 @@ public class RegistroPlacas extends javax.swing.JFrame {
         });
         jPanel1.add(txtFieldPlacaNueva, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 265, 310, 30));
 
+        txtFieldCosto.setEditable(false);
         txtFieldCosto.setFont(new java.awt.Font("Segoe UI", 2, 16)); // NOI18N
         txtFieldCosto.setForeground(new java.awt.Color(153, 153, 153));
         txtFieldCosto.setBorder(null);
