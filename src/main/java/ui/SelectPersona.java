@@ -96,6 +96,10 @@ public class SelectPersona extends javax.swing.JFrame {
                     System.out.println("Validar la informacion para verificar si esta persona menor de edad cuenta con una licencia ya que no es posible");
                 }
             } else if (this.operacion == ConstantesGUI.PLACAS) {
+                //Selector de la persona.
+                System.out.println(this.tblPersonas.getValueAt(this.tblPersonas.getSelectedRow(), 3));
+                new SelectAuto(this.conexion).setVisible(true);
+                this.dispose();
                 System.out.println("En desarrollo");
             } else {
                 System.out.println("Operación inválida");
@@ -118,7 +122,7 @@ public class SelectPersona extends javax.swing.JFrame {
         DpFecha = new com.github.lgooddatepicker.components.DatePicker();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblPersonas = new javax.swing.JTable();
-        btnSig1 = new javax.swing.JButton();
+        btnBuscar = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
         btnSig = new javax.swing.JButton();
         txtFieldNombre = new javax.swing.JTextField();
@@ -162,17 +166,17 @@ public class SelectPersona extends javax.swing.JFrame {
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 260, 760, 320));
 
-        btnSig1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgSelectPersona/btnLupa.png"))); // NOI18N
-        btnSig1.setBorder(null);
-        btnSig1.setBorderPainted(false);
-        btnSig1.setContentAreaFilled(false);
-        btnSig1.setForeground(new java.awt.Color(51, 51, 51));
-        btnSig1.addActionListener(new java.awt.event.ActionListener() {
+        btnBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgSelectPersona/btnLupa.png"))); // NOI18N
+        btnBuscar.setBorder(null);
+        btnBuscar.setBorderPainted(false);
+        btnBuscar.setContentAreaFilled(false);
+        btnBuscar.setForeground(new java.awt.Color(51, 51, 51));
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSig1ActionPerformed(evt);
+                btnBuscarActionPerformed(evt);
             }
         });
-        jPanel1.add(btnSig1, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 130, -1, -1));
+        jPanel1.add(btnBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 130, -1, -1));
 
         btnCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgSelectPersona/btnCancel.png"))); // NOI18N
         btnCancel.setBorder(null);
@@ -352,9 +356,9 @@ public class SelectPersona extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtFieldNombreKeyTyped
 
-    private void btnSig1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSig1ActionPerformed
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         this.cargarPersonas();
-    }//GEN-LAST:event_btnSig1ActionPerformed
+    }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         abrirMenuPrincipal();
@@ -367,9 +371,9 @@ public class SelectPersona extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.github.lgooddatepicker.components.DatePicker DpFecha;
+    private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnSig;
-    private javax.swing.JButton btnSig1;
     private com.github.lgooddatepicker.components.DateTimePicker dateTimePicker1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

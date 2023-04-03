@@ -4,17 +4,42 @@
  */
 package ui;
 
+import implementaciones.AutoDAO;
+import implementaciones.ConexionBD;
+import interfaces.IConexionBD;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+import org.itson.dominio.Auto;
+
 /**
  *
  * @author eruma
  */
 public class SelectAuto extends javax.swing.JFrame {
 
+    private IConexionBD conexion = new ConexionBD("org.itson_Proyecto2BDA");
+    private AutoDAO autoDAO;
+
     /**
      * Creates new form SelectAuto
      */
-    public SelectAuto() {
+    public SelectAuto(IConexionBD conexion) {
         initComponents();
+        this.autoDAO = new AutoDAO(conexion.crearConexion());
+        this.cargarAutos();
+    }
+
+    private void cargarAutos() {
+        DefaultTableModel modeloTabla = (DefaultTableModel) this.tblAutos.getModel();
+        List<Auto> listAutos = autoDAO.cargarTodosLosAutos();
+        for (int i = 0; i < listAutos.size(); i++) {
+            if (listAutos.get(i) != null) {
+                Object[] fila = {listAutos.get(i).getNumSerie(), listAutos.get(i).getMarca(),
+                    listAutos.get(i).getModelo(), listAutos.get(i).getColor()};
+                modeloTabla.addRow(fila);
+                System.out.println(listAutos.get(i));
+            }
+        }
     }
 
     /**
@@ -36,7 +61,6 @@ public class SelectAuto extends javax.swing.JFrame {
         lblFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1200, 800));
         setResizable(false);
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -151,6 +175,7 @@ public class SelectAuto extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddAutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddAutoActionPerformed
@@ -172,8 +197,8 @@ public class SelectAuto extends javax.swing.JFrame {
     }//GEN-LAST:event_txtFieldPlacasFocusLost
 
     private void txtFieldPlacasMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtFieldPlacasMouseEntered
-        if (txtFieldPlacas.getText().equals("Ingrese su RFC"))
-        txtFieldPlacas.setText("");
+        if (txtFieldPlacas.getText().equals("Ingrese su Serie de Placas"))
+            txtFieldPlacas.setText("");
     }//GEN-LAST:event_txtFieldPlacasMouseEntered
 
     private void txtFieldPlacasMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtFieldPlacasMouseExited
@@ -200,40 +225,6 @@ public class SelectAuto extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtFieldPlacasKeyTyped
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SelectAuto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SelectAuto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SelectAuto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SelectAuto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new SelectAuto().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddAuto;
