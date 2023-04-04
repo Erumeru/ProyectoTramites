@@ -53,6 +53,14 @@ public class Auto implements Serializable {
         this.marca = marca;
         this.nuevo = nuevo;
     }
+public Auto(String modelo, String color, String numSerie, String linea, String marca) {
+        this.modelo = modelo;
+        this.color = color;
+        this.numSerie = numSerie;
+        this.linea = linea;
+        this.marca = marca;
+        this.nuevo=true;
+    }
 
     public Auto() {
     }

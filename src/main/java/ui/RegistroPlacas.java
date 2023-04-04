@@ -4,19 +4,57 @@
  */
 package ui;
 
+import implementaciones.ConexionBD;
+import implementaciones.TramitePlacasDAO;
+import interfaces.IConexionBD;
+import java.util.GregorianCalendar;
+import java.util.Random;
+import org.itson.dominio.Auto;
+import org.itson.dominio.Persona;
+import org.itson.dominio.Placa;
+import org.itson.dominio.TramitePlacas;
+
 /**
  *
  * @author eruma
  */
 public class RegistroPlacas extends javax.swing.JFrame {
-
+private IConexionBD conexion = new ConexionBD("org.itson_Proyecto2BDA");
+    private TramitePlacasDAO tramitePlacasDAO;
+    private Persona persona;
+    private Auto auto;
+    private int costo;
+    private String placaNueva;
     /**
      * Creates new form RegistroPlacas
      */
-    public RegistroPlacas() {
+   public RegistroPlacas(IConexionBD conexion, Persona persona, Auto auto, int costo) {
         initComponents();
+        this.tramitePlacasDAO = new TramitePlacasDAO(conexion.crearConexion());
+        this.persona=persona;
+        this.auto=auto;
+        this.costo=costo;
+        this.placaNueva=this.generarCadena();
+        this.txtFieldPlacaNueva.setText(placaNueva);
+        this.txtFieldCosto.setText(String.valueOf(this.costo));
     }
 
+   public static String generarCadena() {
+    Random rnd = new Random();
+    StringBuilder sb = new StringBuilder();
+    // Generamos tres letras aleatorias
+    for (int i = 0; i < 3; i++) {
+      char c = (char) (rnd.nextInt(26) + 'a');
+      sb.append(c);
+    }
+    // Añadimos el guión
+    sb.append("-");
+    // Generamos un número aleatorio de tres cifras
+    int numero = rnd.nextInt(900) + 100;
+    sb.append(numero);
+
+    return sb.toString();
+  }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -177,6 +215,8 @@ public class RegistroPlacas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
+        this.tramitePlacasDAO.nuevoTramite(new Placa(new TramitePlacas(1500, new GregorianCalendar(),persona),new GregorianCalendar(),this.placaNueva,auto ));  
+     //   this.tramitePlacasDAO.nuevoTramite(placa, 1500, new GregorianCalendar(), persona);
 
     }//GEN-LAST:event_btnOkActionPerformed
 
@@ -256,40 +296,7 @@ public class RegistroPlacas extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtFieldCostoKeyTyped
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(RegistroPlacas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(RegistroPlacas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(RegistroPlacas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(RegistroPlacas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new RegistroPlacas().setVisible(true);
-            }
-        });
-    }
+ 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnOk;

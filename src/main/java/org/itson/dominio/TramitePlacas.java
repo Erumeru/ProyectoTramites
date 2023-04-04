@@ -40,7 +40,13 @@ public class TramitePlacas extends Tramite implements Serializable {
         super(costo, fechaExpedicion, persona);
         this.placa = placa;
     }
+    
+    public TramitePlacas(Placa placa, int costo, Calendar fechaExpedicion, Persona persona) {
+        super(costo, fechaExpedicion, persona);
+        this.placa = placa;
+    }
 
+    
     @Override
     public String toString() {
         return "TramitePlacas{" + "placa=" + placa + '}';

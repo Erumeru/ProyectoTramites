@@ -4,17 +4,27 @@
  */
 package ui;
 
+import implementaciones.AutoDAO;
+import implementaciones.ConexionBD;
+import interfaces.IConexionBD;
+import org.itson.dominio.Auto;
+import org.itson.dominio.Persona;
+
 /**
  *
  * @author eruma
  */
 public class CreateAutoNuevo extends javax.swing.JFrame {
-
+    private IConexionBD conexion = new ConexionBD("org.itson_Proyecto2BDA");
+    private AutoDAO autoDAO;
+    private Persona persona;
     /**
      * Creates new form CreateAutoNuevo
      */
-    public CreateAutoNuevo() {
+    public CreateAutoNuevo(IConexionBD conexion, Persona persona) {
         initComponents();
+        this.autoDAO = new AutoDAO(conexion.crearConexion());
+        this.persona=persona;
     }
 
     /**
@@ -244,7 +254,10 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSigActionPerformed
-
+       String modelo=this.txtFieldModelo.getText(),linea=this.txtFieldLinea.getText(),color=this.txtFieldColor.getText(),marca=this.txtFieldMarca.getText(),numSerie=this.txtFieldNumSerie.getText();
+       Auto auto=new Auto(modelo,color,numSerie,linea,marca);
+       new RegistroPlacas(this.conexion,this.persona,auto,1500).setVisible(true);
+       this.dispose();
     }//GEN-LAST:event_btnSigActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
@@ -426,40 +439,7 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtFieldMarcaKeyTyped
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CreateAutoNuevo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CreateAutoNuevo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CreateAutoNuevo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CreateAutoNuevo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new CreateAutoNuevo().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;

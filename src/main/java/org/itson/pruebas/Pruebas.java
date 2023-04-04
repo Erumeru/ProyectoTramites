@@ -55,6 +55,17 @@ public class Pruebas {
         entityManager.getTransaction().commit();
         
         */
+        
+        EntityManager entityManager= conexion.crearConexion();
+        entityManager.getTransaction().begin();
+        Persona persona = entityManager.find(Persona.class, 1L);
+        Licencia licencia = new Licencia(3);
+        TramiteLicencia tramite = new TramiteLicencia(licencia, 1000, new GregorianCalendar(), persona);
+
+
+        entityManager.persist(tramite);
+        entityManager.getTransaction().commit();
+        
         SelectTramite ventanaPrincipal = new SelectTramite(conexion);
         ventanaPrincipal.setVisible(true);
     }

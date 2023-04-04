@@ -40,6 +40,7 @@ public class PersonaDAO implements IPersonaDAO {
         this.entityManager = entityManager;
     }
 
+    @Override
     public Persona consultarPersona(String rfc){
         String jpql = "SELECT ps FROM Persona ps WHERE ps.rfc = :rfc";
         TypedQuery<Persona> query = entityManager.createQuery(jpql, Persona.class);

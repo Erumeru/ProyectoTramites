@@ -75,7 +75,8 @@ public class SelectPersona extends javax.swing.JFrame {
     
     private void abrirVentanaAutomoviles() {
         if (this.isVisible()) {
-            new SelectAuto(conexion).setVisible(true);
+           Persona personaElegida=this.persona.consultarPersona((String) this.tblPersonas.getValueAt(this.tblPersonas.getSelectedRow(), 3)); 
+            new SelectAuto(conexion, personaElegida).setVisible(true);
             this.setVisible(false);
         }
     }
@@ -119,6 +120,7 @@ public class SelectPersona extends javax.swing.JFrame {
                 if(vigencia&&mayoriaEdad){
                     this.mostrarMensajePantalla("Cumple con los requisitos para seguir con el trámite");
                     this.abrirVentanaAutomoviles();
+                System.out.println("En desarrollo");
                 }else if(!vigencia&&mayoriaEdad){
                     this.mostrarMensajePantalla("No se puede seguir con el trámite debido a que no cuenta con una licencia vigente");
                 }else if(!vigencia&&!mayoriaEdad){
@@ -126,6 +128,8 @@ public class SelectPersona extends javax.swing.JFrame {
                 }else{
                     this.mostrarMensajePantalla("No se puede seguir con el trámite debido a que es menor de edad");
                 }
+
+                
             } else {
                 System.out.println("Operación inválida");
             }

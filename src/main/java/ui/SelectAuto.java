@@ -10,6 +10,7 @@ import interfaces.IConexionBD;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import org.itson.dominio.Auto;
+import org.itson.dominio.Persona;
 import utilidades.AutomovilesPlacasDTO;
 import utilidades.ConstantesGUI;
 
@@ -21,14 +22,16 @@ public class SelectAuto extends javax.swing.JFrame {
 
     private IConexionBD conexion = new ConexionBD("org.itson_Proyecto2BDA");
     private AutoDAO autoDAO;
-
+    private Persona persona;
     /**
      * Creates new form SelectAuto
      */
-    public SelectAuto(IConexionBD conexion) {
+    public SelectAuto(IConexionBD conexion, Persona persona) {
         initComponents();
         this.autoDAO = new AutoDAO(conexion.crearConexion());
         this.cargarAutos();
+        this.persona=persona;
+        System.out.println(persona);
     }
 
     private void cargarAutos() {
@@ -215,7 +218,8 @@ public class SelectAuto extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddAutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddAutoActionPerformed
-
+        new CreateAutoNuevo(this.conexion, this.persona).setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnAddAutoActionPerformed
 
     private void btnSigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSigActionPerformed

@@ -23,14 +23,14 @@ public class Placa implements Serializable {
     @OneToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "idTramitePlacas", nullable = false)
     private TramitePlacas tramitePlacas;
-    
+
     @Column(name = "fechaRecepcion", nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar fechaRecepcion;
-    
+
     @Column(name = "seriePlacas", nullable = false, length = 7)
     private String seriePlacas;
-    
+
     @ManyToOne
     @JoinColumn(name = "idAuto", nullable = false)
     private Auto automovil;
@@ -67,6 +67,13 @@ public class Placa implements Serializable {
         this.tramitePlacas = tramitePlacas;
     }
 
+    public Placa(TramitePlacas tramitePlacas, Calendar fechaRecepcion, String seriePlacas, Auto automovil) {
+        this.tramitePlacas = tramitePlacas;
+        this.fechaRecepcion = fechaRecepcion;
+        this.seriePlacas = seriePlacas;
+        this.automovil = automovil;
+    }
+
     public Calendar getFechaRecepcion() {
         return fechaRecepcion;
     }
@@ -90,7 +97,7 @@ public class Placa implements Serializable {
     public void setAutomovil(Auto automovil) {
         this.automovil = automovil;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
