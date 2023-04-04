@@ -8,6 +8,7 @@ import implementaciones.AutoDAO;
 import implementaciones.ConexionBD;
 import interfaces.IConexionBD;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.itson.dominio.Auto;
 import org.itson.dominio.Persona;
@@ -31,6 +32,7 @@ public class SelectAuto extends javax.swing.JFrame {
         this.autoDAO = new AutoDAO(conexion.crearConexion());
         this.cargarAutos();
         this.persona=persona;
+        this.setLocationRelativeTo(null);
         System.out.println(persona);
     }
 
@@ -64,6 +66,17 @@ public class SelectAuto extends javax.swing.JFrame {
     private void abrirBuscadorPersonas(ConstantesGUI gui) {
         if (this.isVisible()) {
             new SelectPersona(conexion, gui).setVisible(true);
+            this.setVisible(false);
+        }
+    }
+    
+    private void mostrarMensajePantalla(String msj) {
+        JOptionPane.showMessageDialog(null, msj, "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    private void abrirRegistroPlacas(Persona persona, AutomovilesPlacasDTO auto) {
+        if (this.isVisible()) {
+            new RegistroPlacas(conexion, persona, auto, 1000).setVisible(true);
             this.setVisible(false);
         }
     }
@@ -223,7 +236,14 @@ public class SelectAuto extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddAutoActionPerformed
 
     private void btnSigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSigActionPerformed
-
+        Integer indiceRenglonInicial = 0, indiceColumnaPlacas = 0;
+        if (this.tblAutos.getSelectedRow() >= indiceRenglonInicial) {
+            String placasAutoSeleccionadas = (String) this.tblAutos.getModel().getValueAt(this.tblAutos.getSelectedRow(), indiceColumnaPlacas);
+            AutomovilesPlacasDTO autoSeleccionado = this.autoDAO.cargarAuto(placasAutoSeleccionadas).get(0);
+            this.abrirRegistroPlacas(persona, autoSeleccionado);
+        }else{
+            this.mostrarMensajePantalla("Seleccione un auto o realice una búsqueda de autos");
+        }
     }//GEN-LAST:event_btnSigActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed

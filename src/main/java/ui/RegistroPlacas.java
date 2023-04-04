@@ -5,56 +5,83 @@
 package ui;
 
 import implementaciones.ConexionBD;
+import implementaciones.PlacasDAO;
 import implementaciones.TramitePlacasDAO;
 import interfaces.IConexionBD;
+import interfaces.IPlacasDAO;
 import java.util.GregorianCalendar;
 import java.util.Random;
+import javax.swing.JOptionPane;
 import org.itson.dominio.Auto;
 import org.itson.dominio.Persona;
 import org.itson.dominio.Placa;
 import org.itson.dominio.TramitePlacas;
+import utilidades.AutomovilesPlacasDTO;
+import utilidades.GeneradorPlacas;
 
 /**
  *
  * @author eruma
  */
 public class RegistroPlacas extends javax.swing.JFrame {
-private IConexionBD conexion = new ConexionBD("org.itson_Proyecto2BDA");
+
+    private IConexionBD conexion = new ConexionBD("org.itson_Proyecto2BDA");
     private TramitePlacasDAO tramitePlacasDAO;
+    private IPlacasDAO placasDAO;
     private Persona persona;
-    private Auto auto;
+    private AutomovilesPlacasDTO auto;
     private int costo;
     private String placaNueva;
+
     /**
      * Creates new form RegistroPlacas
      */
-   public RegistroPlacas(IConexionBD conexion, Persona persona, Auto auto, int costo) {
+    public RegistroPlacas(IConexionBD conexion, Persona persona, AutomovilesPlacasDTO auto, int costo) {
         initComponents();
         this.tramitePlacasDAO = new TramitePlacasDAO(conexion.crearConexion());
-        this.persona=persona;
-        this.auto=auto;
-        this.costo=costo;
-        this.placaNueva=this.generarCadena();
-        this.txtFieldPlacaNueva.setText(placaNueva);
+        this.persona = persona;
+        this.auto = auto;
+        this.costo = costo;
+        this.placasDAO = new PlacasDAO(conexion.crearConexion());
+        this.generarPlaca();
+        this.mostrarPlacas();
         this.txtFieldCosto.setText(String.valueOf(this.costo));
+        this.setLocationRelativeTo(null);
     }
 
-   public static String generarCadena() {
-    Random rnd = new Random();
-    StringBuilder sb = new StringBuilder();
-    // Generamos tres letras aleatorias
-    for (int i = 0; i < 3; i++) {
-      char c = (char) (rnd.nextInt(26) + 'a');
-      sb.append(c);
+    private void mostrarPlacas() {
+        if (costo == 1500) {
+            this.txtFieldPlacaNueva.setText(placaNueva);
+            this.txtFieldPlacaNueva.setEditable(false);
+        } else {
+            this.txtFieldPlacaNueva.setText(placaNueva);
+            this.txtFieldPlacaNueva.setEditable(false);
+            this.txtFieldPlacaAnt.setText(auto.getPlacas());
+            this.txtFieldPlacaAnt.setEditable(false);
+        }
     }
-    // Añadimos el guión
-    sb.append("-");
-    // Generamos un número aleatorio de tres cifras
-    int numero = rnd.nextInt(900) + 100;
-    sb.append(numero);
 
-    return sb.toString();
-  }
+    private void generarPlaca() {
+        while (true) {
+            String placaGenerada = GeneradorPlacas.generarCadena();
+            if (!placasDAO.validarExistenciaPlaca(placaGenerada)) {
+                this.placaNueva = placaGenerada;
+                break;
+            }
+        }
+    }
+
+    private void abrirMenuPrincipal() {
+        if (this.isVisible()) {
+            new SelectTramite(conexion).setVisible(true);
+            this.setVisible(false);
+        }
+    }
+
+    private void mostrarMensajePantalla(String msj) {
+        JOptionPane.showMessageDialog(null, msj, "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -69,7 +96,7 @@ private IConexionBD conexion = new ConexionBD("org.itson_Proyecto2BDA");
         txtFieldPlacaAnt = new javax.swing.JTextField();
         txtFieldPlacaNueva = new javax.swing.JTextField();
         txtFieldCosto = new javax.swing.JTextField();
-        btnOk1 = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
         lblFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -185,17 +212,17 @@ private IConexionBD conexion = new ConexionBD("org.itson_Proyecto2BDA");
         });
         jPanel1.add(txtFieldCosto, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 375, 310, 30));
 
-        btnOk1.setForeground(new java.awt.Color(51, 51, 51));
-        btnOk1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgSelectPersona/btnCancel.png"))); // NOI18N
-        btnOk1.setBorder(null);
-        btnOk1.setBorderPainted(false);
-        btnOk1.setContentAreaFilled(false);
-        btnOk1.addActionListener(new java.awt.event.ActionListener() {
+        btnCancelar.setForeground(new java.awt.Color(51, 51, 51));
+        btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgSelectPersona/btnCancel.png"))); // NOI18N
+        btnCancelar.setBorder(null);
+        btnCancelar.setBorderPainted(false);
+        btnCancelar.setContentAreaFilled(false);
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnOk1ActionPerformed(evt);
+                btnCancelarActionPerformed(evt);
             }
         });
-        jPanel1.add(btnOk1, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 570, -1, -1));
+        jPanel1.add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 570, -1, -1));
 
         lblFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgRegistroPlacas/lblFondo.png"))); // NOI18N
         jPanel1.add(lblFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
@@ -215,14 +242,20 @@ private IConexionBD conexion = new ConexionBD("org.itson_Proyecto2BDA");
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
-        this.tramitePlacasDAO.nuevoTramite(new Placa(new TramitePlacas(1500, new GregorianCalendar(),persona),new GregorianCalendar(),this.placaNueva,auto ));  
-     //   this.tramitePlacasDAO.nuevoTramite(placa, 1500, new GregorianCalendar(), persona);
-
+        if (costo == 1000) {
+            Placa placaAnterior = this.placasDAO.obtenerPlaca(this.auto.getPlacas());
+            if (placaAnterior != null) {
+                this.placasDAO.cancelarPlacasAuto(placaAnterior);
+            }
+        }
+        this.tramitePlacasDAO.nuevoTramite(new Placa(new TramitePlacas(costo, new GregorianCalendar(), persona), this.placaNueva, auto.getAutomovil()));
+        this.mostrarMensajePantalla("Se ha realizado el trámite de las placas");
+        this.abrirMenuPrincipal();
     }//GEN-LAST:event_btnOkActionPerformed
 
-    private void btnOk1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOk1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnOk1ActionPerformed
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        this.abrirMenuPrincipal();
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void txtFieldPlacaNuevaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFieldPlacaNuevaFocusLost
 
@@ -296,11 +329,10 @@ private IConexionBD conexion = new ConexionBD("org.itson_Proyecto2BDA");
         // TODO add your handling code here:
     }//GEN-LAST:event_txtFieldCostoKeyTyped
 
- 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnOk;
-    private javax.swing.JButton btnOk1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lblFondo;
     private javax.swing.JTextField txtFieldCosto;

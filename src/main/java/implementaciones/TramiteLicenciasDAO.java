@@ -4,30 +4,26 @@
  */
 package implementaciones;
 
+import interfaces.ITramiteLicenciasDAO;
 import javax.persistence.EntityManager;
-import interfaces.ITramitePlacasDAO;
-import java.util.Calendar;
-import org.itson.dominio.Persona;
-import org.itson.dominio.Placa;
+import org.itson.dominio.TramiteLicencia;
 
 /**
  *
- * @author eruma
+ * @author mario
  */
-public class TramitePlacasDAO implements ITramitePlacasDAO {
+public class TramiteLicenciasDAO implements ITramiteLicenciasDAO {
 
     private final EntityManager entityManager;
 
-    public TramitePlacasDAO(EntityManager entityManager) {
+    public TramiteLicenciasDAO(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
-    public void nuevoTramite(Placa placa) {
+    public void nuevoTramite(TramiteLicencia tramite) {
         entityManager.getTransaction().begin();
-        if(placa.getTramitePlacas().getCosto()==1500){
-            entityManager.persist(placa.getAutomovil());
-        }
-        entityManager.persist(placa);
+        entityManager.persist(tramite);
         entityManager.getTransaction().commit();
     }
+
 }

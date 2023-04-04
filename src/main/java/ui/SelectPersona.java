@@ -80,11 +80,11 @@ public class SelectPersona extends javax.swing.JFrame {
             this.setVisible(false);
         }
     }
-    //FALTA...
+    
     private void abrirVentanaLicencia() {
         if (this.isVisible()) {
-            //Falta crear Frame de Licencias
-            //new TramiteLicencia(conexion).setVisible(true);
+            Persona personaElegida=this.persona.consultarPersona((String) this.tblPersonas.getValueAt(this.tblPersonas.getSelectedRow(), 3)); 
+            new ActualizarLicencia(conexion,personaElegida).setVisible(true);
             this.setVisible(false);
         }
     }
@@ -134,6 +134,8 @@ public class SelectPersona extends javax.swing.JFrame {
                 System.out.println("Operación inválida");
             }
 
+        }else{
+            this.mostrarMensajePantalla("Seleccione a una persona o realice una búsqueda de personas");
         }
     }
     

@@ -5,19 +5,7 @@
 package org.itson.pruebas;
 
 import implementaciones.ConexionBD;
-import implementaciones.PersonaDAO;
 import interfaces.IConexionBD;
-import java.util.GregorianCalendar;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import org.itson.dominio.Auto;
-import org.itson.dominio.Licencia;
-import org.itson.dominio.Persona;
-import org.itson.dominio.Placa;
-import org.itson.dominio.TramiteLicencia;
-import org.itson.dominio.TramitePlacas;
 import ui.SelectTramite;
 
 /**
@@ -39,9 +27,12 @@ public class Pruebas {
         
         
         
-        Persona persona = new Persona(false, new GregorianCalendar(), "123456", "DASDM355123", "Mario", "Diaz", "Padilla");
-        //Licencia licencia = new Licencia(3);
-        //TramiteLicencia tramite = new TramiteLicencia(licencia, 1000, new GregorianCalendar(), persona);
+        Persona persona = entityManager.find(Persona.class, L);
+        Licencia licencia = new Licencia(3);
+        TramiteLicencia tramite = new TramiteLicencia(licencia, 1000, new GregorianCalendar(), persona);
+        
+        
+        entityManager.persist(tramite);
         
         Persona pE = entityManager.find(Persona.class, 21L);
         TramitePlacas t = new TramitePlacas(1000, new GregorianCalendar(), pE);
@@ -56,15 +47,6 @@ public class Pruebas {
         
         */
         
-        EntityManager entityManager= conexion.crearConexion();
-        entityManager.getTransaction().begin();
-        Persona persona = entityManager.find(Persona.class, 1L);
-        Licencia licencia = new Licencia(3);
-        TramiteLicencia tramite = new TramiteLicencia(licencia, 1000, new GregorianCalendar(), persona);
-
-
-        entityManager.persist(tramite);
-        entityManager.getTransaction().commit();
         
         SelectTramite ventanaPrincipal = new SelectTramite(conexion);
         ventanaPrincipal.setVisible(true);

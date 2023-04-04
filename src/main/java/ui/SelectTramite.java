@@ -28,6 +28,7 @@ public class SelectTramite extends javax.swing.JFrame {
         initComponents();
         this.conexion = conexion;
         this.personaDAO = new PersonaDAO(this.conexion.crearConexion());
+        this.setLocationRelativeTo(null);
     }
 
     private void abrirBuscadorPersonas(ConstantesGUI gui) {

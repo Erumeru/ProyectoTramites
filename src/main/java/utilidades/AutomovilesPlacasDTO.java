@@ -16,6 +16,9 @@ public class AutomovilesPlacasDTO {
     
     private Auto automovil;
 
+    public AutomovilesPlacasDTO() {
+    }
+
     public AutomovilesPlacasDTO(String placas, Auto automovil) {
         this.placas = placas;
         this.automovil = automovil;

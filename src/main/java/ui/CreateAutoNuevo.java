@@ -9,6 +9,7 @@ import implementaciones.ConexionBD;
 import interfaces.IConexionBD;
 import org.itson.dominio.Auto;
 import org.itson.dominio.Persona;
+import utilidades.AutomovilesPlacasDTO;
 
 /**
  *
@@ -25,6 +26,7 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
         initComponents();
         this.autoDAO = new AutoDAO(conexion.crearConexion());
         this.persona=persona;
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -256,7 +258,9 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
     private void btnSigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSigActionPerformed
        String modelo=this.txtFieldModelo.getText(),linea=this.txtFieldLinea.getText(),color=this.txtFieldColor.getText(),marca=this.txtFieldMarca.getText(),numSerie=this.txtFieldNumSerie.getText();
        Auto auto=new Auto(modelo,color,numSerie,linea,marca);
-       new RegistroPlacas(this.conexion,this.persona,auto,1500).setVisible(true);
+       AutomovilesPlacasDTO autoPlacas = new AutomovilesPlacasDTO();
+       autoPlacas.setAutomovil(auto);
+       new RegistroPlacas(this.conexion,this.persona,autoPlacas,1500).setVisible(true);
        this.dispose();
     }//GEN-LAST:event_btnSigActionPerformed
 

@@ -4,17 +4,117 @@
  */
 package ui;
 
+import implementaciones.ConexionBD;
+import implementaciones.TramiteLicenciasDAO;
+import interfaces.IConexionBD;
+import java.awt.event.ItemEvent;
+import java.util.GregorianCalendar;
+import javax.persistence.EntityManager;
+import javax.swing.JOptionPane;
+import org.itson.dominio.Licencia;
+import org.itson.dominio.Persona;
+import org.itson.dominio.TramiteLicencia;
+import utilidades.ConstantesGUI;
+
 /**
  *
- * @author eruma
+ * @author
  */
 public class ActualizarLicencia extends javax.swing.JFrame {
+
+    private IConexionBD conexion;
+    private Persona persona;
+    private EntityManager entityManager;
+    private Integer vigenciaLicencia;
+    private Integer costoLicencia;
+    private TramiteLicenciasDAO tramiteLicenciasDAO;
+
+    /**
+     * Creates new form CreateAutoNuevo
+     */
+    public ActualizarLicencia(IConexionBD conexion, Persona persona) {
+        initComponents();
+        this.conexion = conexion;
+        this.persona = persona;
+        this.txtFieldCosto.setEditable(false);
+        this.txtFieldNombre.setEditable(false);
+        this.entityManager = conexion.crearConexion();
+        this.txtFieldNombre.setText(persona.getNombres() + " " + persona.getApellido_paterno());
+        this.tramiteLicenciasDAO = new TramiteLicenciasDAO(this.entityManager);
+        this.calcularCosto();
+        this.setLocationRelativeTo(null);
+    }
 
     /**
      * Creates new form ActualizarLicencia
      */
     public ActualizarLicencia() {
         initComponents();
+    }
+
+    private void calcularCosto() {
+        String vigencia = (String) this.cbxVigencia.getSelectedItem();
+        if (vigencia.equalsIgnoreCase("1 AÑO")) {
+            this.vigenciaLicencia = 1;
+            if (persona.isDiscapacitado()) {
+                this.costoLicencia = 200;
+                this.txtFieldCosto.setText("Costo: "+this.costoLicencia);
+            } else {
+                this.costoLicencia = 600;
+                this.txtFieldCosto.setText("Costo: "+this.costoLicencia);
+            }
+        } else if (vigencia.equalsIgnoreCase("2 AÑOS")) {
+            this.vigenciaLicencia = 2;
+            if (persona.isDiscapacitado()) {
+                this.costoLicencia = 500;
+                this.txtFieldCosto.setText("Costo: "+this.costoLicencia);
+            } else {
+                this.costoLicencia = 900;
+                this.txtFieldCosto.setText("Costo: "+this.costoLicencia);
+            }
+        } else {
+            this.vigenciaLicencia = 3;
+            if (persona.isDiscapacitado()) {
+                this.costoLicencia = 700;
+                this.txtFieldCosto.setText("Costo: "+this.costoLicencia);
+            } else {
+                this.costoLicencia = 1100;
+                this.txtFieldCosto.setText("Costo: "+this.costoLicencia);
+            }
+        }
+    }
+
+    private void mostrarMensajePantalla(String msj) {
+        JOptionPane.showMessageDialog(null, msj, "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void crearLicencia() {
+        Persona persona = entityManager.find(Persona.class, this.persona.getId());
+        if (persona != null) {
+            Licencia licencia = new Licencia(this.vigenciaLicencia);
+            TramiteLicencia tramite = new TramiteLicencia(licencia, this.costoLicencia , new GregorianCalendar(), persona);
+            
+            this.tramiteLicenciasDAO.nuevoTramite(tramite);
+            
+            this.mostrarMensajePantalla("Se ha tramitado la licencia correctamente");
+        } else {
+            this.mostrarMensajePantalla("No se pudo tramitar la licencia");
+        }
+        this.abrirMenuPrincipal();
+    }
+    
+    private void abrirBuscadorPersonas(ConstantesGUI gui) {
+        if (this.isVisible()) {
+            new SelectPersona(conexion, gui).setVisible(true);
+            this.setVisible(false);
+        }
+    }
+    
+    private void abrirMenuPrincipal() {
+        if (this.isVisible()) {
+            new SelectTramite(conexion).setVisible(true);
+            this.setVisible(false);
+        }
     }
 
     /**
@@ -29,14 +129,13 @@ public class ActualizarLicencia extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         txtFieldCosto = new javax.swing.JTextField();
         btnSig = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cbxVigencia = new javax.swing.JComboBox<>();
         lblVigencia = new javax.swing.JLabel();
         btnCancel = new javax.swing.JButton();
         txtFieldNombre = new javax.swing.JTextField();
         lblFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1200, 800));
         setResizable(false);
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -86,8 +185,13 @@ public class ActualizarLicencia extends javax.swing.JFrame {
         });
         jPanel1.add(btnSig, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 570, -1, -1));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Todo", "Placa", "Licencia" }));
-        jPanel1.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 232, 150, 30));
+        cbxVigencia.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1 AÑO", "2 AÑOS", "3 AÑOS" }));
+        cbxVigencia.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbxVigenciaItemStateChanged(evt);
+            }
+        });
+        jPanel1.add(cbxVigencia, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 232, 150, 30));
 
         lblVigencia.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblVigencia.setText("Vigencia:");
@@ -204,52 +308,24 @@ public class ActualizarLicencia extends javax.swing.JFrame {
     }//GEN-LAST:event_txtFieldNombreKeyTyped
 
     private void btnSigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSigActionPerformed
-
+        crearLicencia();
     }//GEN-LAST:event_btnSigActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-
+       this.abrirBuscadorPersonas(ConstantesGUI.LICENCIAS);
     }//GEN-LAST:event_btnCancelActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ActualizarLicencia.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ActualizarLicencia.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ActualizarLicencia.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ActualizarLicencia.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    private void cbxVigenciaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxVigenciaItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            calcularCosto();
         }
-        //</editor-fold>
+    }//GEN-LAST:event_cbxVigenciaItemStateChanged
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ActualizarLicencia().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnSig;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> cbxVigencia;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lblFondo;
     private javax.swing.JLabel lblVigencia;
