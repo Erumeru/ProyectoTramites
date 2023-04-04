@@ -4,6 +4,7 @@
  */
 package org.itson.dominio;
 
+import criptografia.EncriptadorAES;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
@@ -46,6 +47,20 @@ public class Persona implements Serializable {
 
     @OneToMany(mappedBy = "persona")
     private List<Tramite> tramites;
+    
+    @PrePersist
+    private void encriptarNombreCompleto(){
+        this.nombres = EncriptadorAES.convertirColumnaBD(this.nombres);
+        this.apellido_paterno = EncriptadorAES.convertirColumnaBD(this.apellido_paterno);
+        this.apellido_materno = EncriptadorAES.convertirColumnaBD(this.apellido_materno);
+    }
+    
+    @PostLoad
+    private void desencriptarNombreCompleto(){
+        this.nombres = EncriptadorAES.convertirAtributoEntidad(this.nombres);
+        this.apellido_paterno = EncriptadorAES.convertirAtributoEntidad(this.apellido_paterno);
+        this.apellido_materno = EncriptadorAES.convertirAtributoEntidad(this.apellido_materno);
+    }
     
     public Persona() {
     }

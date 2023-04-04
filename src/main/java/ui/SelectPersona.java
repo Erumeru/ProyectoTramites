@@ -10,7 +10,6 @@ import interfaces.IConexionBD;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
-import javax.swing.JOptionPane;
 import javax.swing.plaf.PanelUI;
 import javax.swing.table.DefaultTableModel;
 import org.itson.dominio.Persona;
@@ -72,60 +71,36 @@ public class SelectPersona extends javax.swing.JFrame {
             this.setVisible(false);
         }
     }
-    
-    private void abrirVentanaAutomoviles() {
-        if (this.isVisible()) {
-            new SelectAuto(conexion).setVisible(true);
-            this.setVisible(false);
-        }
-    }
-    //FALTA...
-    private void abrirVentanaLicencia() {
-        if (this.isVisible()) {
-            //Falta crear Frame de Licencias
-            //new TramiteLicencia(conexion).setVisible(true);
-            this.setVisible(false);
-        }
-    }
-    
-    private void mostrarMensajePantalla(String msj) {
-        JOptionPane.showMessageDialog(null, msj, "Info", JOptionPane.INFORMATION_MESSAGE);
-    }
 
     private void siguiente(){
         Integer indiceRenglonInicial = 0, indiceColumnaRFC = 3;
         if (this.tblPersonas.getSelectedRow() >= indiceRenglonInicial) {
-            String rfcPersonaSeleccionada = (String) this.tblPersonas.getModel().getValueAt(this.tblPersonas.getSelectedRow(), indiceColumnaRFC);
+
             if (this.operacion == ConstantesGUI.LICENCIAS) {
-                
+                String rfcPersonaSeleccionada = (String) this.tblPersonas.getModel().getValueAt(this.tblPersonas.getSelectedRow(), indiceColumnaRFC);
+
                 boolean vigencia = persona.consultarLicenciaVigentePersona(rfcPersonaSeleccionada),
                         mayoriaEdad = persona.validarMayoriaEdadPersona(rfcPersonaSeleccionada);
                 
                 if(vigencia&&mayoriaEdad){
-                    this.mostrarMensajePantalla("No se puede registrar licencia para esta persona debido a que ya cuenta con una vigente");
+                    System.out.printf("La persona con el rfc %s cuenta con una licencia vigente y es mayor de edad\n", rfcPersonaSeleccionada);
+                    System.out.println("Regresar al inicio o dejar en la misma pantalla ya que no se puede registrar licencia para esta persona debido a que ya cuenta con una vigente");
                 }else if(!vigencia&&mayoriaEdad){
-                    this.mostrarMensajePantalla("Cumple con los requisitos para seguir con el trámite");
-                    this.abrirVentanaLicencia();
+                    System.out.printf("La persona con el rfc %s no cuenta con una licencia vigente y es mayor de edad\n", rfcPersonaSeleccionada);
+                    System.out.println("Cuenta con los requisitos para continuar con el proceso para tramitar licencia");
                 }else if(!vigencia&&!mayoriaEdad){
-                    this.mostrarMensajePantalla("No se puede registrar licencia para esta persona debido a que es menor de edad");
+                    System.out.printf("La persona con el rfc %s no cuenta con una licencia vigente y no es mayor de edad\n", rfcPersonaSeleccionada);
+                    System.out.println("Regresar al inicio o dejar en la misma pantalla ya que no se puede registrar licencia para esta persona ya que no es mayor de edad");
                 }else{
-                    this.mostrarMensajePantalla("No se puede registrar licencia para esta persona debido a que es menor de edad");
+                    System.out.printf("La persona con el rfc %s cuenta con una licencia vigente y no es mayor de edad\n", rfcPersonaSeleccionada);
+                    System.out.println("Validar la informacion para verificar si esta persona menor de edad cuenta con una licencia ya que no es posible");
                 }
             } else if (this.operacion == ConstantesGUI.PLACAS) {
-                
-                boolean vigencia = persona.consultarLicenciaVigentePersona(rfcPersonaSeleccionada),
-                        mayoriaEdad = persona.validarMayoriaEdadPersona(rfcPersonaSeleccionada);
-                
-                if(vigencia&&mayoriaEdad){
-                    this.mostrarMensajePantalla("Cumple con los requisitos para seguir con el trámite");
-                    this.abrirVentanaAutomoviles();
-                }else if(!vigencia&&mayoriaEdad){
-                    this.mostrarMensajePantalla("No se puede seguir con el trámite debido a que no cuenta con una licencia vigente");
-                }else if(!vigencia&&!mayoriaEdad){
-                    this.mostrarMensajePantalla("No se puede seguir con el trámite debido a que no cuenta con una licencia vigente y es menor de edad");
-                }else{
-                    this.mostrarMensajePantalla("No se puede seguir con el trámite debido a que es menor de edad");
-                }
+                //Selector de la persona.
+                System.out.println(this.tblPersonas.getValueAt(this.tblPersonas.getSelectedRow(), 3));
+                new SelectAuto(this.conexion).setVisible(true);
+                this.dispose();
+                System.out.println("En desarrollo");
             } else {
                 System.out.println("Operación inválida");
             }

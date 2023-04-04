@@ -38,23 +38,16 @@ public class Pruebas {
         entityManager.getTransaction().begin();
         
         
-        
         Persona persona = new Persona(false, new GregorianCalendar(), "123456", "DASDM355123", "Mario", "Diaz", "Padilla");
-        //Licencia licencia = new Licencia(3);
-        //TramiteLicencia tramite = new TramiteLicencia(licencia, 1000, new GregorianCalendar(), persona);
+        Licencia licencia = new Licencia(3);
+        TramiteLicencia tramite = new TramiteLicencia(licencia, 1000, new GregorianCalendar(), persona);
         
-        Persona pE = entityManager.find(Persona.class, 21L);
-        TramitePlacas t = new TramitePlacas(1000, new GregorianCalendar(), pE);
-        Auto a = entityManager.find(Auto.class, 1L);
-        Placa p = new Placa(t, "ABC-123", a);
-        
-        
-        entityManager.persist(a);
-        entityManager.persist(p);
+        entityManager.persist(persona);
+        entityManager.persist(tramite);
         
         entityManager.getTransaction().commit();
-        
         */
+        
         SelectTramite ventanaPrincipal = new SelectTramite(conexion);
         ventanaPrincipal.setVisible(true);
     }
