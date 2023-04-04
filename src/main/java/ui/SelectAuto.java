@@ -10,6 +10,8 @@ import interfaces.IConexionBD;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import org.itson.dominio.Auto;
+import utilidades.AutomovilesPlacasDTO;
+import utilidades.ConstantesGUI;
 
 /**
  *
@@ -31,17 +33,38 @@ public class SelectAuto extends javax.swing.JFrame {
 
     private void cargarAutos() {
         DefaultTableModel modeloTabla = (DefaultTableModel) this.tblAutos.getModel();
-        List<Auto> listAutos = autoDAO.cargarTodosLosAutos();
-        for (int i = 0; i < listAutos.size(); i++) {
-            if (listAutos.get(i) != null) {
-                Object[] fila = {listAutos.get(i).getNumSerie(), listAutos.get(i).getMarca(),
-                    listAutos.get(i).getModelo(), listAutos.get(i).getColor()};
-                modeloTabla.addRow(fila);
-                System.out.println(listAutos.get(i));
+        modeloTabla.setRowCount(0);
+        String placas = this.txtFieldPlacas.getText();
+        if (placas.equalsIgnoreCase("Ingrese su Serie de Placas") || placas.equalsIgnoreCase("")) {
+            List<AutomovilesPlacasDTO> listAutos = autoDAO.cargarTodosLosAutos();
+            for (int i = 0; i < listAutos.size(); i++) {
+                if (listAutos.get(i) != null) {
+                    Object[] fila = {listAutos.get(i).getPlacas(), listAutos.get(i).getAutomovil().getNumSerie(), listAutos.get(i).getAutomovil().getMarca(),
+                        listAutos.get(i).getAutomovil().getModelo(), listAutos.get(i).getAutomovil().getColor()};
+                    modeloTabla.addRow(fila);
+                    System.out.println(listAutos.get(i));
+                }
+            }
+        } else {
+            List<AutomovilesPlacasDTO> listAutos = autoDAO.cargarAuto(placas);
+            for (int i = 0; i < listAutos.size(); i++) {
+                if (listAutos.get(i) != null) {
+                    Object[] fila = {listAutos.get(i).getPlacas(), listAutos.get(i).getAutomovil().getNumSerie(), listAutos.get(i).getAutomovil().getMarca(),
+                        listAutos.get(i).getAutomovil().getModelo(), listAutos.get(i).getAutomovil().getColor()};
+                    modeloTabla.addRow(fila);
+                    System.out.println(listAutos.get(i));
+                }
             }
         }
     }
 
+    private void abrirBuscadorPersonas(ConstantesGUI gui) {
+        if (this.isVisible()) {
+            new SelectPersona(conexion, gui).setVisible(true);
+            this.setVisible(false);
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -53,6 +76,7 @@ public class SelectAuto extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         txtFieldPlacas = new javax.swing.JTextField();
+        btnBuscar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblAutos = new javax.swing.JTable();
         btnSig = new javax.swing.JButton();
@@ -96,6 +120,18 @@ public class SelectAuto extends javax.swing.JFrame {
             }
         });
         jPanel1.add(txtFieldPlacas, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 130, 350, -1));
+
+        btnBuscar.setForeground(new java.awt.Color(51, 51, 51));
+        btnBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgSelectPersona/btnLupa.png"))); // NOI18N
+        btnBuscar.setBorder(null);
+        btnBuscar.setBorderPainted(false);
+        btnBuscar.setContentAreaFilled(false);
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 120, -1, -1));
 
         tblAutos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -187,7 +223,7 @@ public class SelectAuto extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSigActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-
+        abrirBuscadorPersonas(ConstantesGUI.PLACAS);
     }//GEN-LAST:event_btnCancelActionPerformed
 
     private void txtFieldPlacasFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFieldPlacasFocusLost
@@ -225,9 +261,14 @@ public class SelectAuto extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtFieldPlacasKeyTyped
 
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        this.cargarAutos();
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddAuto;
+    private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnSig;
     private javax.swing.JPanel jPanel1;
