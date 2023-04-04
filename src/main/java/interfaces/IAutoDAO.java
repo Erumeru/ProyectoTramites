@@ -6,6 +6,7 @@ package interfaces;
 
 import java.util.List;
 import org.itson.dominio.Auto;
+import utilidades.AutomovilesPlacasDTO;
 
 /**
  *
@@ -13,6 +14,8 @@ import org.itson.dominio.Auto;
  */
 public interface IAutoDAO {
 
-    List<Auto> cargarTodosLosAutos();
+    List<AutomovilesPlacasDTO> cargarTodosLosAutos();
+    
+    List<AutomovilesPlacasDTO> cargarAuto(String placas);
 
 }
