@@ -364,7 +364,7 @@ public class SelectPersona extends javax.swing.JFrame {
     }//GEN-LAST:event_txtFieldNombreMouseEntered
 
     private void txtFieldNombreMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtFieldNombreMouseExited
-        if (txtFieldNombre.getText().equals("")) {
+        if (txtFieldNombre.getText().trim().equals("")) {
             txtFieldNombre.setText("Ingrese su Nombre");
         } else if (!txtFieldNombre.getText().equals("Ingrese su Nombre")) {
             evt.consume();
@@ -377,13 +377,32 @@ public class SelectPersona extends javax.swing.JFrame {
 
     private void txtFieldNombreKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFieldNombreKeyReleased
         // TODO add your handling code here:
-        txtFieldNombre.setText(txtFieldNombre.getText().trim());
+        //txtFieldNombre.setText(txtFieldNombre.getText().trim());
     }//GEN-LAST:event_txtFieldNombreKeyReleased
-
+    private boolean spacePressed = false;
+    
     private void txtFieldNombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFieldNombreKeyTyped
-        txtFieldNombre.setText(txtFieldNombre.getText().trim());
-        if (txtFieldNombre.getText().equals("Ingrese su Nombre")) {
-            txtFieldNombre.setText("");
+        char c = evt.getKeyChar();
+        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+            // El caracter ingresado es una letra
+            evt.setKeyChar(c); // Permitir el caracter
+            spacePressed = false;
+        } else if (Character.isISOControl(c)) {
+            // Permitir caracteres de control como backspace y delete
+            evt.setKeyChar(c);
+            spacePressed = false;
+        } else if (Character.isWhitespace(c)) {
+            // Permitir un solo espacio
+            if (!spacePressed) {
+                evt.setKeyChar(c);
+                spacePressed = true;
+            } else {
+                evt.consume(); // Ignorar el caracter
+            }
+        } else {
+            // El caracter ingresado no es una letra ni un caracter de control
+            evt.consume(); // Ignorar el caracter
+            spacePressed = false;
         }
     }//GEN-LAST:event_txtFieldNombreKeyTyped
 

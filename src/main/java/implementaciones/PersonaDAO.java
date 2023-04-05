@@ -6,11 +6,14 @@ package implementaciones;
 
 import interfaces.IPersonaDAO;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -96,10 +99,7 @@ public class PersonaDAO implements IPersonaDAO {
 
         List<Predicate> filtros = new LinkedList<>();
 
-        if (!nombre.equalsIgnoreCase("Ingrese su Nombre") && !nombre.equals("")) {
-            filtros.add(criteriaBuilder.like(personaRoot.get("nombres"), "%" + nombre + "%"));
-        }
-        if (!rfc.equalsIgnoreCase("Ingrese su RFC") && !nombre.equals("")) {
+        if (!rfc.equalsIgnoreCase("Ingrese su RFC") && !rfc.equals("")) {
             filtros.add(criteriaBuilder.like(personaRoot.get("rfc"), rfc));
         }
         if (fecha != null) {
@@ -112,6 +112,22 @@ public class PersonaDAO implements IPersonaDAO {
 
         TypedQuery<Persona> query = entityManager.createQuery(criteriaQuery);
 
+        Set<Persona> queryFechaRFC = new HashSet<>(query.getResultList());
+        
+        if (!nombre.equalsIgnoreCase("Ingrese su Nombre") && !nombre.equals("")) {
+            List<Persona> personasNombreSimilar = new ArrayList<>();
+            List<Persona> registroPersonas = this.cargarTodasPersonas();
+            for (Persona registroPersona : registroPersonas) {
+                String nombreCompleto = registroPersona.getNombres() + " "+registroPersona.getApellido_paterno() + " "+ registroPersona.getApellido_materno();
+                if((nombreCompleto.toUpperCase()).contains(nombre.toUpperCase().trim())){
+                    personasNombreSimilar.add(registroPersona);
+                }
+            }
+            Set<Persona> queryNombresSimilares = new HashSet<>(personasNombreSimilar);
+            queryFechaRFC.addAll(queryNombresSimilares);
+            List<Persona> personasEncontradas = new ArrayList<>(queryFechaRFC);
+            return personasEncontradas;
+        }        
         return query.getResultList();
     }
 
@@ -157,9 +173,9 @@ public class PersonaDAO implements IPersonaDAO {
         if (cargarTodasPersonas().size() >= 15) {
             return false;
         } else {
-            String[] nombres = {"Ana", "Luis", "Miguel", "Sofía", "Diego", "Valentina", "Jorge", "Gabriela", "Roberto", "María", "Carmen", "Juan", "Carla", "Francisco", "Alejandra", "Pablo", "Lucía", "Andrés", "Mariana", "Fernando"};
-            String[] apellidosPaternos = {"García", "González", "Hernández", "Martínez", "López", "Pérez", "Gómez", "Díaz", "Ruiz", "Flores", "Ramírez", "Sánchez", "Torres", "Reyes", "Mendoza", "Castro", "Ortiz", "Chávez", "Vargas", "Aguilar"};
-            String[] apellidosMaternos = {"Ramírez", "Hernández", "García", "Torres", "Martínez", "Sánchez", "González", "Castillo", "Fernández", "Chávez", "Gómez", "Mendoza", "Pérez", "Díaz", "Herrera", "Vázquez", "Ramos", "López", "Soto", "Sosa"};
+            String[] nombres = {"Ana", "Luis", "Miguel", "Sofia", "Diego", "Valentina", "Jorge", "Gabriela", "Roberto", "Maria", "Carmen", "Juan", "Carla", "Francisco", "Alejandra", "Pablo", "Lucia", "Andres", "Mariana", "Fernando"};
+            String[] apellidosPaternos = {"Garcia", "Gonzalez", "Hernandez", "Martinez", "Lopez", "Perez", "Gomez", "Diaz", "Ruiz", "Flores", "Ramirez", "Sanchez", "Torres", "Reyes", "Mendoza", "Castro", "Ortiz", "Chavez", "Vargas", "Aguilar"};
+            String[] apellidosMaternos = {"Ramirez", "Hernandez", "Garcia", "Torres", "Martinez", "Sanchez", "Gonzalez", "Castillo", "Fernandez", "Chavez", "Gomez", "Mendoza", "Perez", "Diaz", "Herrera", "Vazquez", "Ramos", "Lopez", "Soto", "Sosa"};
             String[] rfcs = {"ABC12345678901", "DEF23456789012", "GHI34567890123", "JKL45678901234", "MNO56789012345", "PQR67890123456", "STU78901234567", "VWX89012345678", "YZA90123456789", "BCD01234567890", "EFG12345678901", "HIJ23456789012", "KLM34567890123", "NOP45678901234", "QRS56789012345", "TUV67890123456", "WXY78901234567", "ZAB89012345678", "CDE90123456789", "FGH01234567890"};
             String[] telefonos = {"6441100001", "6441200002", "6441300003", "6441400004", "6441500005", "6441600006", "6441700007", "6441800008", "6441900009", "6442100010", "6442200011", "6442300012", "6442400013", "6442500014", "6442600015", "6442700016", "6442800017", "6442900018", "6443100019", "6443200020"};
 

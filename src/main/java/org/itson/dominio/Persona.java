@@ -4,6 +4,7 @@
  */
 package org.itson.dominio;
 
+import criptografia.EncriptadorAESConverter;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
@@ -35,13 +36,16 @@ public class Persona implements Serializable {
     @Column(name = "rfc", nullable = false, length = 15)
     private String rfc;
     
-    @Column(name = "nombres", nullable = false, length = 64)
+    @Convert(converter = EncriptadorAESConverter.class)
+    @Column(name = "nombres", nullable = false, length = 128)
     private String nombres;
     
-    @Column(name = "apellido_paterno", nullable = false, length = 64)
+    @Convert(converter = EncriptadorAESConverter.class)
+    @Column(name = "apellido_paterno", nullable = false, length = 128)
     private String apellido_paterno;
     
-    @Column(name = "apellido_materno", nullable = false, length = 64)
+    @Convert(converter = EncriptadorAESConverter.class)
+    @Column(name = "apellido_materno", nullable = false, length = 128)
     private String apellido_materno;
 
     @OneToMany(mappedBy = "persona")

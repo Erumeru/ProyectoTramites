@@ -4,8 +4,12 @@
  */
 package org.itson.pruebas;
 
+
+import criptografia.EncriptadorAESConverter;
 import implementaciones.ConexionBD;
 import interfaces.IConexionBD;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import ui.SelectTramite;
 
 /**
