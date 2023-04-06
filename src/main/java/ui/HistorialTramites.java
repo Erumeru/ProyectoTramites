@@ -11,8 +11,18 @@ import java.awt.event.ItemEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.view.JasperViewer;
 import org.itson.dominio.Persona;
+import reportes.TramitesDataSource;
 import utilidades.ConstantesGUI;
 import utilidades.ParametrosBusquedaTramites;
 import utilidades.TramitesDTO;
@@ -28,6 +38,7 @@ public class HistorialTramites extends javax.swing.JFrame {
     private Persona personaSeleccionada;
     private TramiteLicenciasDAO licenciasDAO;
     private TramitePlacasDAO placasDAO;
+    private TramitesDataSource reporteJasper;
 
     /**
      * Creates new form HistorialTramites
@@ -108,6 +119,9 @@ public class HistorialTramites extends javax.swing.JFrame {
                 modeloTabla.addRow(fila);
             }
         }
+        
+        this.reporteJasper=new TramitesDataSource(tramites);
+        
     }
 
     private void abrirMenuPrincipal() {
@@ -349,7 +363,17 @@ public class HistorialTramites extends javax.swing.JFrame {
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReporteActionPerformed
-
+       //Se genera el reporte utilizando la libreria JasperReports.
+        try {
+            JasperReport report= (JasperReport) JRLoader.loadObjectFromFile("src\\main\\java\\reportes\\MaritElmer.jasper");
+            JasperPrint jPrint= JasperFillManager.fillReport(report, null,this.reporteJasper.getDataSource());
+            JasperViewer view=new JasperViewer(jPrint, false);
+            view.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            view.setVisible(true);
+        } catch (JRException ex) {
+            ex.getMessage();
+        }
+        
     }//GEN-LAST:event_btnReporteActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
