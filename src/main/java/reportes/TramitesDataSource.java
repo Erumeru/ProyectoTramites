@@ -29,10 +29,10 @@ public class TramitesDataSource implements JRDataSource {
         index = -1;
         for (int i = 0; i < listaTramites.size(); i++) {
             listadoDeTramites[i][0] = listaTramites.get(i).getTipoTramite();
-            listadoDeTramites[i][1] = String.valueOf(listaTramites.get(i).getCostoTramite());
+            listadoDeTramites[i][1] = "$"+String.valueOf(listaTramites.get(i).getCostoTramite());
             Date fecha=listaTramites.get(i).getFechaExpedicion().getTime();
             listadoDeTramites[i][2] = fecha.getDate()+"/"+(fecha.getMonth()+1)+"/"+(fecha.getYear()+1900);
-            listadoDeTramites[i][3] = listaTramites.get(i).getNombrePersona();
+            listadoDeTramites[i][3] = listaTramites.get(i).getNombrePersona()+ " "+listaTramites.get(i).getApellidoPersona();
         }
     }
 
