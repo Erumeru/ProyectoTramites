@@ -72,73 +72,87 @@ public class SelectPersona extends javax.swing.JFrame {
             this.setVisible(false);
         }
     }
-    
+
     private void abrirVentanaAutomoviles() {
         if (this.isVisible()) {
-           Persona personaElegida=this.persona.consultarPersona((String) this.tblPersonas.getValueAt(this.tblPersonas.getSelectedRow(), 3)); 
+            Persona personaElegida = this.persona.consultarPersona((String) this.tblPersonas.getValueAt(this.tblPersonas.getSelectedRow(), 3));
             new SelectAuto(conexion, personaElegida).setVisible(true);
             this.setVisible(false);
         }
     }
-    
+
     private void abrirVentanaLicencia() {
         if (this.isVisible()) {
-            Persona personaElegida=this.persona.consultarPersona((String) this.tblPersonas.getValueAt(this.tblPersonas.getSelectedRow(), 3)); 
-            new ActualizarLicencia(conexion,personaElegida).setVisible(true);
+            Persona personaElegida = this.persona.consultarPersona((String) this.tblPersonas.getValueAt(this.tblPersonas.getSelectedRow(), 3));
+            new ActualizarLicencia(conexion, personaElegida).setVisible(true);
             this.setVisible(false);
         }
     }
-    
+
     private void mostrarMensajePantalla(String msj) {
         JOptionPane.showMessageDialog(null, msj, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void siguiente(){
+    private void abrirMenuReporte(ConstantesGUI gui) {
+        if (this.isVisible()) {
+            Persona personaElegida = this.persona.consultarPersona((String) this.tblPersonas.getValueAt(this.tblPersonas.getSelectedRow(), 3));
+            new HistorialTramites(conexion, gui, personaElegida).setVisible(true);
+            this.setVisible(false);
+        }
+    }
+
+    private void siguiente() {
         Integer indiceRenglonInicial = 0, indiceColumnaRFC = 3;
         if (this.tblPersonas.getSelectedRow() >= indiceRenglonInicial) {
             String rfcPersonaSeleccionada = (String) this.tblPersonas.getModel().getValueAt(this.tblPersonas.getSelectedRow(), indiceColumnaRFC);
             if (this.operacion == ConstantesGUI.LICENCIAS) {
-                
+
                 boolean vigencia = persona.consultarLicenciaVigentePersona(rfcPersonaSeleccionada),
                         mayoriaEdad = persona.validarMayoriaEdadPersona(rfcPersonaSeleccionada);
-                
-                if(vigencia&&mayoriaEdad){
+
+                if (vigencia && mayoriaEdad) {
                     this.mostrarMensajePantalla("No se puede registrar licencia para esta persona debido a que ya cuenta con una vigente");
-                }else if(!vigencia&&mayoriaEdad){
+                } else if (!vigencia && mayoriaEdad) {
                     this.mostrarMensajePantalla("Cumple con los requisitos para seguir con el trámite");
                     this.abrirVentanaLicencia();
-                }else if(!vigencia&&!mayoriaEdad){
+                } else if (!vigencia && !mayoriaEdad) {
                     this.mostrarMensajePantalla("No se puede registrar licencia para esta persona debido a que es menor de edad");
-                }else{
+                } else {
                     this.mostrarMensajePantalla("No se puede registrar licencia para esta persona debido a que es menor de edad");
                 }
             } else if (this.operacion == ConstantesGUI.PLACAS) {
-                
+
                 boolean vigencia = persona.consultarLicenciaVigentePersona(rfcPersonaSeleccionada),
                         mayoriaEdad = persona.validarMayoriaEdadPersona(rfcPersonaSeleccionada);
-                
-                if(vigencia&&mayoriaEdad){
+
+                if (vigencia && mayoriaEdad) {
                     this.mostrarMensajePantalla("Cumple con los requisitos para seguir con el trámite");
                     this.abrirVentanaAutomoviles();
-                System.out.println("En desarrollo");
-                }else if(!vigencia&&mayoriaEdad){
+                } else if (!vigencia && mayoriaEdad) {
                     this.mostrarMensajePantalla("No se puede seguir con el trámite debido a que no cuenta con una licencia vigente");
-                }else if(!vigencia&&!mayoriaEdad){
+                } else if (!vigencia && !mayoriaEdad) {
                     this.mostrarMensajePantalla("No se puede seguir con el trámite debido a que no cuenta con una licencia vigente y es menor de edad");
-                }else{
+                } else {
                     this.mostrarMensajePantalla("No se puede seguir con el trámite debido a que es menor de edad");
                 }
 
-                
+            } else if (this.operacion == ConstantesGUI.HISTORIAL) {
+                boolean mayoriaEdad = persona.validarMayoriaEdadPersona(rfcPersonaSeleccionada);
+                if(mayoriaEdad){
+                    this.mostrarMensajePantalla("Cumple con los requisitos para seguir con la operación");
+                    this.abrirMenuReporte(ConstantesGUI.HISTORIAL);
+                }else{
+                    this.mostrarMensajePantalla("No se puede seguir con la operación debido a que es menor de edad");
+                }
             } else {
                 System.out.println("Operación inválida");
             }
 
-        }else{
+        } else {
             this.mostrarMensajePantalla("Seleccione a una persona o realice una búsqueda de personas");
         }
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -380,7 +394,7 @@ public class SelectPersona extends javax.swing.JFrame {
         //txtFieldNombre.setText(txtFieldNombre.getText().trim());
     }//GEN-LAST:event_txtFieldNombreKeyReleased
     private boolean spacePressed = false;
-    
+
     private void txtFieldNombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFieldNombreKeyTyped
         char c = evt.getKeyChar();
         if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {

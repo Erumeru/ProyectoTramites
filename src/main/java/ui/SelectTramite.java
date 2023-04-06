@@ -38,6 +38,13 @@ public class SelectTramite extends javax.swing.JFrame {
         }
     }
     
+    private void abrirMenuReporte(ConstantesGUI gui) {
+        if (this.isVisible()) {
+            new HistorialTramites(conexion, gui, null).setVisible(true);
+            this.setVisible(false);
+        }
+    }
+    
     private void mostrarMensajePantalla(String msj) {
         JOptionPane.showMessageDialog(null, msj, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
@@ -54,6 +61,7 @@ public class SelectTramite extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         btnPlacas = new javax.swing.JButton();
         btnLicencias = new javax.swing.JButton();
+        btnConsultaReporte = new javax.swing.JButton();
         btnUserHistorial = new javax.swing.JButton();
         btnAddUser = new javax.swing.JButton();
         lblAddCuentas = new javax.swing.JLabel();
@@ -88,12 +96,33 @@ public class SelectTramite extends javax.swing.JFrame {
         });
         jPanel1.add(btnLicencias, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 460, -1, -1));
 
+        btnConsultaReporte.setFont(new java.awt.Font("DialogInput", 1, 14)); // NOI18N
+        btnConsultaReporte.setForeground(new java.awt.Color(51, 51, 51));
+        btnConsultaReporte.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgSelectAuto/lblAddAuto.png"))); // NOI18N
+        btnConsultaReporte.setText("   Consulta por reporte");
+        btnConsultaReporte.setBorder(null);
+        btnConsultaReporte.setBorderPainted(false);
+        btnConsultaReporte.setContentAreaFilled(false);
+        btnConsultaReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConsultaReporteActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnConsultaReporte, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 140, 250, 50));
+
+        btnUserHistorial.setFont(new java.awt.Font("DialogInput", 1, 14)); // NOI18N
         btnUserHistorial.setForeground(new java.awt.Color(51, 51, 51));
         btnUserHistorial.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgSelectTramite/btnUserHistorial.png"))); // NOI18N
+        btnUserHistorial.setText("  Consulta de historial");
         btnUserHistorial.setBorder(null);
         btnUserHistorial.setBorderPainted(false);
         btnUserHistorial.setContentAreaFilled(false);
-        jPanel1.add(btnUserHistorial, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 110, -1, -1));
+        btnUserHistorial.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUserHistorialActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnUserHistorial, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 100, 250, 40));
 
         btnAddUser.setForeground(new java.awt.Color(51, 51, 51));
         btnAddUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgSelectTramite/addUser.png"))); // NOI18N
@@ -105,10 +134,10 @@ public class SelectTramite extends javax.swing.JFrame {
                 btnAddUserActionPerformed(evt);
             }
         });
-        jPanel1.add(btnAddUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 570, -1, -1));
+        jPanel1.add(btnAddUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 570, -1, -1));
 
         lblAddCuentas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgSelectTramite/lblAgregarCuentas.png"))); // NOI18N
-        jPanel1.add(lblAddCuentas, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        jPanel1.add(lblAddCuentas, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 0, 1180, -1));
 
         lblFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgSelectTramite/FondoBase.png"))); // NOI18N
         jPanel1.add(lblFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
@@ -145,8 +174,17 @@ public class SelectTramite extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnAddUserActionPerformed
 
+    private void btnConsultaReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultaReporteActionPerformed
+        this.abrirMenuReporte(ConstantesGUI.REPORTE);
+    }//GEN-LAST:event_btnConsultaReporteActionPerformed
+
+    private void btnUserHistorialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUserHistorialActionPerformed
+        this.abrirBuscadorPersonas(ConstantesGUI.HISTORIAL);
+    }//GEN-LAST:event_btnUserHistorialActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddUser;
+    private javax.swing.JButton btnConsultaReporte;
     private javax.swing.JButton btnLicencias;
     private javax.swing.JButton btnPlacas;
     private javax.swing.JButton btnUserHistorial;

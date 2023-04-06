@@ -9,5 +9,5 @@ package utilidades;
  * @author mario
  */
 public enum ConstantesGUI {
-    LICENCIAS, PLACAS
+    LICENCIAS, PLACAS, HISTORIAL, REPORTE
 }

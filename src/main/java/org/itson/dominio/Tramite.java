@@ -25,7 +25,7 @@ public class Tramite implements Serializable {
     private int costo;
     
     @Column(name="fechaExpedicion", nullable=false)
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     private Calendar fechaExpedicion;
     
     @ManyToOne

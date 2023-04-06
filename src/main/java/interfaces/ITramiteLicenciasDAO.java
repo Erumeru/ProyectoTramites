@@ -4,7 +4,10 @@
  */
 package interfaces;
 
+import java.util.List;
 import org.itson.dominio.TramiteLicencia;
+import utilidades.ParametrosBusquedaTramites;
+import utilidades.TramitesDTO;
 
 /**
  *
@@ -12,4 +15,7 @@ import org.itson.dominio.TramiteLicencia;
  */
 public interface ITramiteLicenciasDAO {
     void nuevoTramite(TramiteLicencia tramite);
+    List<TramitesDTO> cargarTramites(Long idPersona);
+    List<TramitesDTO> cargarTramites(ParametrosBusquedaTramites parametros);
+    List<TramitesDTO> cargarTodosTramites();
 }

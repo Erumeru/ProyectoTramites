@@ -4,18 +4,117 @@
  */
 package ui;
 
+import implementaciones.TramiteLicenciasDAO;
+import implementaciones.TramitePlacasDAO;
+import interfaces.IConexionBD;
+import java.awt.event.ItemEvent;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+import org.itson.dominio.Persona;
+import utilidades.ConstantesGUI;
+import utilidades.ParametrosBusquedaTramites;
+import utilidades.TramitesDTO;
+
 /**
  *
  * @author eruma
  */
 public class HistorialTramites extends javax.swing.JFrame {
 
+    private ConstantesGUI operacion;
+    private IConexionBD conexion;
+    private Persona personaSeleccionada;
+    private TramiteLicenciasDAO licenciasDAO;
+    private TramitePlacasDAO placasDAO;
+
     /**
      * Creates new form HistorialTramites
      */
-    public HistorialTramites() {
+    public HistorialTramites(IConexionBD conexion, ConstantesGUI operacion, Persona personaSeleccionada) {
         initComponents();
+        this.operacion = operacion;
+        this.conexion = conexion;
+        this.personaSeleccionada = personaSeleccionada;
+        this.licenciasDAO = new TramiteLicenciasDAO(conexion.crearConexion());
+        this.placasDAO = new TramitePlacasDAO(conexion.crearConexion());
+        this.ajustarInterfaz();
+        this.cargarTramites();
         this.setLocationRelativeTo(null);
+    }
+
+    private void ajustarInterfaz() {
+        if (operacion == ConstantesGUI.HISTORIAL) {
+            dpFin.setVisible(false);
+            dpInicio.setVisible(false);
+            txtFieldNombre.setVisible(false);
+            lblFondoReutilizar.setVisible(true);
+            lblFondoReutilizar2.setVisible(true);
+            btnReporte.setVisible(false);
+        } else {
+            dpFin.setVisible(true);
+            dpInicio.setVisible(true);
+            txtFieldNombre.setVisible(true);
+            lblFondoReutilizar.setVisible(false);
+            lblFondoReutilizar2.setVisible(false);
+            btnReporte.setVisible(true);
+        }
+    }
+
+    private void cargarTramites() {
+        SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
+        DefaultTableModel modeloTabla = (DefaultTableModel) this.tblTramites.getModel();
+        modeloTabla.setRowCount(0);
+        String tipo = (String) this.cbxTipo.getSelectedItem();
+        List<TramitesDTO> tramites = new ArrayList<>();
+        if (operacion == ConstantesGUI.HISTORIAL) {
+            if (tipo.equals("Todo")) {
+                tramites.addAll(licenciasDAO.cargarTramites(personaSeleccionada.getId()));
+                tramites.addAll(placasDAO.cargarTramites(personaSeleccionada.getId()));
+            } else if (tipo.equals("Placa")) {
+                tramites.addAll(placasDAO.cargarTramites(personaSeleccionada.getId()));
+            } else {
+                tramites.addAll(licenciasDAO.cargarTramites(personaSeleccionada.getId()));
+            }
+        } else {
+            if (tipo.equals("Todo")) {
+                tramites.addAll(licenciasDAO.cargarTramites(new ParametrosBusquedaTramites(this.dpInicio.getDate(), this.dpFin.getDate(), this.txtFieldNombre.getText())));
+                tramites.addAll(placasDAO.cargarTramites(new ParametrosBusquedaTramites(this.dpInicio.getDate(), this.dpFin.getDate(), this.txtFieldNombre.getText())));
+                if ((this.txtFieldNombre.getText().equalsIgnoreCase("Ingrese su Nombre") || this.txtFieldNombre.getText().equals(""))
+                        && this.dpInicio.getDate() == null && this.dpFin.getDate() == null) {
+                    tramites.addAll(licenciasDAO.cargarTodosTramites());
+                    tramites.addAll(placasDAO.cargarTodosTramites());
+                }
+            } else if (tipo.equals("Placa")) {
+                tramites.addAll(placasDAO.cargarTramites(new ParametrosBusquedaTramites(this.dpInicio.getDate(), this.dpFin.getDate(), this.txtFieldNombre.getText())));
+                if ((this.txtFieldNombre.getText().equalsIgnoreCase("Ingrese su Nombre") || this.txtFieldNombre.getText().equals(""))
+                        && this.dpInicio.getDate() == null && this.dpFin.getDate() == null) {
+                    tramites.addAll(placasDAO.cargarTodosTramites());
+                }
+            } else {
+                tramites.addAll(licenciasDAO.cargarTramites(new ParametrosBusquedaTramites(this.dpInicio.getDate(), this.dpFin.getDate(), this.txtFieldNombre.getText())));
+                if ((this.txtFieldNombre.getText().equalsIgnoreCase("Ingrese su Nombre") || this.txtFieldNombre.getText().equals(""))
+                        && this.dpInicio.getDate() == null && this.dpFin.getDate() == null) {
+                    tramites.addAll(licenciasDAO.cargarTodosTramites());
+                }
+            }
+
+        }
+        for (int i = 0; i < tramites.size(); i++) {
+            if (tramites.get(i) != null) {
+                Object[] fila = {tramites.get(i).getTipoTramite(), ("$" + tramites.get(i).getCostoTramite()), formateador.format((tramites.get(i).getFechaExpedicion()).getTime()),
+                    (tramites.get(i).getNombrePersona() + " " + tramites.get(i).getApellidoPersona())};
+                modeloTabla.addRow(fila);
+            }
+        }
+    }
+
+    private void abrirMenuPrincipal() {
+        if (this.isVisible()) {
+            new SelectTramite(conexion).setVisible(true);
+            this.setVisible(false);
+        }
     }
 
     /**
@@ -28,6 +127,8 @@ public class HistorialTramites extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        lblFondoReutilizar = new javax.swing.JLabel();
+        lblFondoReutilizar2 = new javax.swing.JLabel();
         btnCancel = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblTramites = new javax.swing.JTable();
@@ -35,23 +136,30 @@ public class HistorialTramites extends javax.swing.JFrame {
         txtFieldNombre = new javax.swing.JTextField();
         dpFin = new com.github.lgooddatepicker.components.DatePicker();
         dpInicio = new com.github.lgooddatepicker.components.DatePicker();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cbxTipo = new javax.swing.JComboBox<>();
         btnReporte = new javax.swing.JButton();
         lblLinea = new javax.swing.JLabel();
         lblGuion = new javax.swing.JLabel();
         lblFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1200, 800));
         setResizable(false);
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        btnCancel.setForeground(new java.awt.Color(51, 51, 51));
+        lblFondoReutilizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgHistorialTramites/lblFondoReutilizar.png"))); // NOI18N
+        lblFondoReutilizar.setText("jLabel1");
+        jPanel1.add(lblFondoReutilizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 580, 260, 50));
+
+        lblFondoReutilizar2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgHistorialTramites/lblFondoReutilizar.png"))); // NOI18N
+        lblFondoReutilizar2.setText("jLabel1");
+        jPanel1.add(lblFondoReutilizar2, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 160, 520, 70));
+
         btnCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgSelectPersona/btnCancel.png"))); // NOI18N
         btnCancel.setBorder(null);
         btnCancel.setBorderPainted(false);
         btnCancel.setContentAreaFilled(false);
+        btnCancel.setForeground(new java.awt.Color(51, 51, 51));
         btnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelActionPerformed(evt);
@@ -86,11 +194,11 @@ public class HistorialTramites extends javax.swing.JFrame {
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 240, 750, 330));
 
-        btnBuscar.setForeground(new java.awt.Color(51, 51, 51));
         btnBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgSelectPersona/btnLupa.png"))); // NOI18N
         btnBuscar.setBorder(null);
         btnBuscar.setBorderPainted(false);
         btnBuscar.setContentAreaFilled(false);
+        btnBuscar.setForeground(new java.awt.Color(51, 51, 51));
         btnBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBuscarActionPerformed(evt);
@@ -99,9 +207,9 @@ public class HistorialTramites extends javax.swing.JFrame {
         jPanel1.add(btnBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 120, -1, -1));
 
         txtFieldNombre.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
-        txtFieldNombre.setForeground(new java.awt.Color(153, 153, 153));
         txtFieldNombre.setText("Ingrese su Nombre");
         txtFieldNombre.setBorder(null);
+        txtFieldNombre.setForeground(new java.awt.Color(153, 153, 153));
         txtFieldNombre.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 txtFieldNombreFocusLost(evt);
@@ -132,14 +240,24 @@ public class HistorialTramites extends javax.swing.JFrame {
         jPanel1.add(dpFin, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 162, -1, -1));
         jPanel1.add(dpInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 162, -1, -1));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Todo", "Placa", "Licencia" }));
-        jPanel1.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 125, 120, -1));
+        cbxTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Todo", "Placa", "Licencia" }));
+        cbxTipo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbxTipoItemStateChanged(evt);
+            }
+        });
+        cbxTipo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbxTipoActionPerformed(evt);
+            }
+        });
+        jPanel1.add(cbxTipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 125, 120, -1));
 
-        btnReporte.setForeground(new java.awt.Color(51, 51, 51));
         btnReporte.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imgHistorialTramites/btnReporte.png"))); // NOI18N
         btnReporte.setBorder(null);
         btnReporte.setBorderPainted(false);
         btnReporte.setContentAreaFilled(false);
+        btnReporte.setForeground(new java.awt.Color(51, 51, 51));
         btnReporte.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnReporteActionPerformed(evt);
@@ -181,7 +299,7 @@ public class HistorialTramites extends javax.swing.JFrame {
 
     private void txtFieldNombreMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtFieldNombreMouseEntered
         if (txtFieldNombre.getText().equals("Ingrese su Nombre"))
-        txtFieldNombre.setText("");
+            txtFieldNombre.setText("");
     }//GEN-LAST:event_txtFieldNombreMouseEntered
 
     private void txtFieldNombreMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtFieldNombreMouseExited
@@ -197,19 +315,37 @@ public class HistorialTramites extends javax.swing.JFrame {
     }//GEN-LAST:event_txtFieldNombreActionPerformed
 
     private void txtFieldNombreKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFieldNombreKeyReleased
-        // TODO add your handling code here:
-        txtFieldNombre.setText(txtFieldNombre.getText().trim());
+
     }//GEN-LAST:event_txtFieldNombreKeyReleased
+    private boolean spacePressed = false;
 
     private void txtFieldNombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFieldNombreKeyTyped
-        txtFieldNombre.setText(txtFieldNombre.getText().trim());
-        if (txtFieldNombre.getText().equals("Ingrese su Nombre")) {
-            txtFieldNombre.setText("");
+        char c = evt.getKeyChar();
+        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+            // El caracter ingresado es una letra
+            evt.setKeyChar(c); // Permitir el caracter
+            spacePressed = false;
+        } else if (Character.isISOControl(c)) {
+            // Permitir caracteres de control como backspace y delete
+            evt.setKeyChar(c);
+            spacePressed = false;
+        } else if (Character.isWhitespace(c)) {
+            // Permitir un solo espacio
+            if (!spacePressed) {
+                evt.setKeyChar(c);
+                spacePressed = true;
+            } else {
+                evt.consume(); // Ignorar el caracter
+            }
+        } else {
+            // El caracter ingresado no es una letra ni un caracter de control
+            evt.consume(); // Ignorar el caracter
+            spacePressed = false;
         }
     }//GEN-LAST:event_txtFieldNombreKeyTyped
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-
+        cargarTramites();
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReporteActionPerformed
@@ -217,20 +353,32 @@ public class HistorialTramites extends javax.swing.JFrame {
     }//GEN-LAST:event_btnReporteActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-
+        this.abrirMenuPrincipal();
     }//GEN-LAST:event_btnCancelActionPerformed
+
+    private void cbxTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxTipoActionPerformed
+
+    }//GEN-LAST:event_cbxTipoActionPerformed
+
+    private void cbxTipoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxTipoItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            cargarTramites();
+        }
+    }//GEN-LAST:event_cbxTipoItemStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnReporte;
+    private javax.swing.JComboBox<String> cbxTipo;
     private com.github.lgooddatepicker.components.DatePicker dpFin;
     private com.github.lgooddatepicker.components.DatePicker dpInicio;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblFondo;
+    private javax.swing.JLabel lblFondoReutilizar;
+    private javax.swing.JLabel lblFondoReutilizar2;
     private javax.swing.JLabel lblGuion;
     private javax.swing.JLabel lblLinea;
     private javax.swing.JTable tblTramites;
