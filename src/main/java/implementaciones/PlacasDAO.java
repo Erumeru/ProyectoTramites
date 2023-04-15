@@ -12,17 +12,32 @@ import javax.persistence.TypedQuery;
 import org.itson.dominio.Placa;
 
 /**
- *
- * @author mario
+ * Esta clase representa la DAO para placas.
+ * @author 233133_233259
  */
 public class PlacasDAO implements IPlacasDAO{
     
+    /**
+     * Este atributo representa un objeto de tipo EntityManager.
+     */
     private final EntityManager entityManager;
 
+    /**
+     * Este constructor inicializa el valor del atributo entityManager
+     * utilizando el valor recibido en el parámetro.
+     * @param entityManager Representa el objeto entityManager que
+     * será utilizado en la clase.
+     */
     public PlacasDAO(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
     
+    /**
+     * Este método realiza la validación de la existencia de unas placas a partir
+     * de su serie de placas.
+     * @param seriePlacas Representan las placas a utilizar para validación.
+     * @return Regresa true en caso de que existan, false en caso contrario.
+     */
     @Override
     public boolean validarExistenciaPlaca(String seriePlacas){
         String jpql = "SELECT p FROM Placa p WHERE p.seriePlacas = :serie";
@@ -35,6 +50,12 @@ public class PlacasDAO implements IPlacasDAO{
         return !placas.isEmpty();
     }
     
+    /**
+     * Este método regresa una placa a partir de su serie de placas.
+     * @param seriePlacas Representan las placas a utilizar para validación.
+     * @return Regresa un objeto Placa en caso de que se encuentre, null
+     * en caso contrario.
+     */
     @Override
     public Placa obtenerPlaca(String seriePlacas){
         String jpql = "SELECT p FROM Placa p WHERE p.seriePlacas = :serie";
@@ -48,6 +69,11 @@ public class PlacasDAO implements IPlacasDAO{
         return lista.isEmpty() ? null : lista.get(0);
     }
     
+    /**
+     * Este método realiza la cancelación de unas placas estableciendo
+     * su fecha de recepción a la fecha del sistema.
+     * @param placa Representan las placas a ser canceladas.
+     */
     @Override
     public void cancelarPlacasAuto(Placa placa){
         entityManager.getTransaction().begin();

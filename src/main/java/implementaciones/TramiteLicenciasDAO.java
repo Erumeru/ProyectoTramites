@@ -17,17 +17,30 @@ import utilidades.ParametrosBusquedaTramites;
 import utilidades.TramitesDTO;
 
 /**
- *
- * @author mario
+ * Esta clase representa la DAO para los trámites de licencias.
+ * @author 233133_233259
  */
 public class TramiteLicenciasDAO implements ITramiteLicenciasDAO {
 
+    /**
+     * Este atributo representa un objeto de tipo EntityManager.
+     */
     private final EntityManager entityManager;
 
+    /**
+     * Este constructor inicializa el valor del atributo entityManager
+     * utilizando el valor recibido en el parámetro.
+     * @param entityManager Representa el objeto entityManager que
+     * será utilizado en la clase.
+     */
     public TramiteLicenciasDAO(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
+    /**
+     * Este método registra un nuevo trámite de licencias al sistema.
+     * @param tramite Representa el trámite a ser registrado.
+     */
     @Override
     public void nuevoTramite(TramiteLicencia tramite) {
         entityManager.getTransaction().begin();
@@ -35,6 +48,12 @@ public class TramiteLicenciasDAO implements ITramiteLicenciasDAO {
         entityManager.getTransaction().commit();
     }
 
+    /**
+     * Este método regresa los trámites de licencias realizados por una persona
+     * a partir de su id.
+     * @param idPersona Representa el id de persona a utilizar.
+     * @return Regresa los trámites de licencias realizados por una persona.
+     */
     @Override
     public List<TramitesDTO> cargarTramites(Long idPersona) {
         List<TramitesDTO> lista = new ArrayList<>();
@@ -53,6 +72,10 @@ public class TramiteLicenciasDAO implements ITramiteLicenciasDAO {
         return lista;
     }
     
+    /**
+     * Este método regresa todos los trámites de licencias realizados.
+     * @return Regresa todos los trámites de licencias realizados.
+     */
     @Override
     public List<TramitesDTO> cargarTodosTramites() {
         List<TramitesDTO> lista = new ArrayList<>();
@@ -70,6 +93,14 @@ public class TramiteLicenciasDAO implements ITramiteLicenciasDAO {
         return lista;
     }
 
+    /**
+     * Este método realiza una búsqueda utilizando el operador OR de todos los trámites 
+     * de licencias que cumplan con los filtros recibidos en los parámetros, incluidos el 
+     * período y el nombre de la persona que los realizó.
+     * @param parametros Representan los parámetros que se utilizarán como filtros
+     * para la búsqueda.
+     * @return Regresa una lista de los trámites de licencias coincidentes a la búsqueda.
+     */
     @Override
     public List<TramitesDTO> cargarTramites(ParametrosBusquedaTramites parametros) {
         Set<TramitesDTO> consultaFiltros = new HashSet<>();

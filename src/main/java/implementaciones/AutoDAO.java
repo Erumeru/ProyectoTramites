@@ -13,17 +13,31 @@ import org.itson.dominio.Auto;
 import utilidades.AutomovilesPlacasDTO;
 
 /**
- *
- * @author eruma
+ * Esta clase representa la DAO para automóviles.
+ * @author 233133_233259
  */
 public class AutoDAO implements IAutoDAO {
 
+    /**
+     * Este atributo representa un objeto de tipo EntityManager.
+     */
     private final EntityManager entityManager;
 
+    /**
+     * Este constructor inicializa el valor del atributo entityManager
+     * utilizando el valor recibido en el parámetro.
+     * @param entityManager Representa el objeto entityManager que
+     * será utilizado en la clase.
+     */
     public AutoDAO(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
+    /**
+     * Este método realiza una consulta jpql de todos los autos con su placa más reciente
+     * en caso de tener alguna.
+     * @return Regresa una lista de todos los autos con su placa más reciente.
+     */
     @Override
     public List<AutomovilesPlacasDTO> cargarTodosLosAutos() {
         List<AutomovilesPlacasDTO> lista = new ArrayList<>();
@@ -40,6 +54,12 @@ public class AutoDAO implements IAutoDAO {
         return lista;
     }
     
+    /**
+     * Este método regresa una lista de autos con su placa más reciente a partir
+     * de una serie de placas.
+     * @param placas Representa la serie de placas a ser utilizada para la búsqueda.
+     * @return Regresa una lista de autos con su placa más reciente.
+     */
     @Override
     public List<AutomovilesPlacasDTO> cargarAuto(String placas) {
         List<AutomovilesPlacasDTO> lista = new ArrayList<>();

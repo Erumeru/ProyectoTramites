@@ -18,17 +18,30 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- *
- * @author eruma
+ * Esta clase representa la DAO para los trámites de placas.
+ * @author 233133_233259
  */
 public class TramitePlacasDAO implements ITramitePlacasDAO {
 
+    /**
+     * Este atributo representa un objeto de tipo EntityManager.
+     */
     private final EntityManager entityManager;
 
+    /**
+     * Este constructor inicializa el valor del atributo entityManager
+     * utilizando el valor recibido en el parámetro.
+     * @param entityManager Representa el objeto entityManager que
+     * será utilizado en la clase.
+     */
     public TramitePlacasDAO(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
+    /**
+     * Este método registra un nuevo trámite de placas al sistema.
+     * @param placa Representa el trámite de placas a ser registrado.
+     */
     @Override
     public void nuevoTramite(Placa placa) {
         entityManager.getTransaction().begin();
@@ -39,6 +52,12 @@ public class TramitePlacasDAO implements ITramitePlacasDAO {
         entityManager.getTransaction().commit();
     }
 
+    /**
+     * Este método regresa los trámites de placas realizados por una persona
+     * a partir de su id.
+     * @param idPersona Representa el id de persona a utilizar.
+     * @return Regresa los trámites de placas realizados por una persona.
+     */
     @Override
     public List<TramitesDTO> cargarTramites(Long idPersona) {
         List<TramitesDTO> lista = new ArrayList<>();
@@ -57,6 +76,10 @@ public class TramitePlacasDAO implements ITramitePlacasDAO {
         return lista;
     }
     
+    /**
+     * Este método regresa todos los trámites de placas realizados.
+     * @return Regresa todos los trámites de placas realizados.
+     */
     @Override
     public List<TramitesDTO> cargarTodosTramites() {
         List<TramitesDTO> lista = new ArrayList<>();
@@ -74,6 +97,14 @@ public class TramitePlacasDAO implements ITramitePlacasDAO {
         return lista;
     }
 
+    /**
+     * Este método realiza una búsqueda utilizando el operador OR de todos los trámites 
+     * de placas que cumplan con los filtros recibidos en los parámetros, incluidos el 
+     * período y el nombre de la persona que los realizó.
+     * @param parametros Representan los parámetros que se utilizarán como filtros
+     * para la búsqueda.
+     * @return Regresa una lista de los trámites de placas coincidentes a la búsqueda.
+     */
     @Override
     public List<TramitesDTO> cargarTramites(ParametrosBusquedaTramites parametros) {
         Set<TramitesDTO> consultaFiltros = new HashSet<>();

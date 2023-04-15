@@ -12,14 +12,22 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 /**
- *
- * @author mario
+ * Esta clase sirve para realizar el encriptado de los campos en la base de datos.
+ * @author 233133_233259
  */
 @Converter
 public class EncriptadorAESConverter implements AttributeConverter<String, String> {
 
+    /**
+     * Este atributo representa la clave secreta utilizada para realizar el encriptado de los campos.
+     */
     private static final String CLAVE_SECRETA = "k4dc2D_gD2_5DSa_bdMs_dc2DlSV_553";
 
+    /**
+     * Este método realiza el encriptado de una cadena utilizando el algoritmo aes.
+     * @param attribute Representa la cadena a encriptar.
+     * @return Regresa la cadena encriptada con el algoritmo aes.
+     */
     @Override
     public String convertToDatabaseColumn(String attribute) {
         try {
@@ -33,6 +41,11 @@ public class EncriptadorAESConverter implements AttributeConverter<String, Strin
         }
     }
 
+    /**
+     * Este método realiza el desencriptado de una cadena utilizando el algoritmo aes.
+     * @param dbData Representa la cadena a desencriptar.
+     * @return Regresa el texto en claro.
+     */
     @Override
     public String convertToEntityAttribute(String dbData) {
         try {
@@ -46,10 +59,20 @@ public class EncriptadorAESConverter implements AttributeConverter<String, Strin
         }
     }
     
+    /**
+     * Este método realiza el encriptado de una cadena utilizando el algoritmo aes.
+     * @param texto Representa la cadena a encriptar.
+     * @return Regresa la cadena encriptada con el algoritmo aes.
+     */
     private String encriptar(String texto) {
         return convertToDatabaseColumn(texto);
     }
 
+    /**
+     * Este método realiza el desencriptado de una cadena utilizando el algoritmo aes.
+     * @param textoEncriptado Representa la cadena a desencriptar.
+     * @return Regresa el texto en claro.
+     */
     private String desencriptar(String textoEncriptado) {
         return convertToEntityAttribute(textoEncriptado);
     }

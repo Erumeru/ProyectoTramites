@@ -24,17 +24,31 @@ import org.itson.dominio.TramiteLicencia;
 import utilidades.ParametrosBusquedaPersonas;
 
 /**
- *
- * @author eruma
+ * Esta clase representa la DAO para personas.
+ * @author 233133_233259
  */
 public class PersonaDAO implements IPersonaDAO {
 
+    /**
+     * Este atributo representa un objeto de tipo EntityManager.
+     */
     private final EntityManager entityManager;
 
+    /**
+     * Este constructor inicializa el valor del atributo entityManager
+     * utilizando el valor recibido en el parámetro.
+     * @param entityManager Representa el objeto entityManager que
+     * será utilizado en la clase.
+     */
     public PersonaDAO(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
+    /**
+     * Este método realiza una consulta jpql de una persona a partir de su rfc.
+     * @param rfc Representa el rfc de la persona a buscar.
+     * @return Regresa una persona en caso de que la encuentre.
+     */
     @Override
     public Persona consultarPersona(String rfc){
         String jpql = "SELECT ps FROM Persona ps WHERE ps.rfc = :rfc";
@@ -45,6 +59,13 @@ public class PersonaDAO implements IPersonaDAO {
         return query.getSingleResult();
     }
     
+    /**
+     * Este método realiza una consulta CriteriaQuery a partir de los parámetros de 
+     * fecha de nacimiento, rfc y nombre completo similar utilizando un operador OR.
+     * @param parametros Representan los parámetros que se utilizarán como filtros
+     * para la búsqueda.
+     * @return Regresa una lista de las personas coincidentes a la búsqueda.
+     */
     @Override
     public List<Persona> consultarPersonas(ParametrosBusquedaPersonas parametros) {
         String nombre = parametros.getNombre(), rfc = parametros.getRfc();
@@ -88,6 +109,10 @@ public class PersonaDAO implements IPersonaDAO {
         return query.getResultList();
     }
 
+    /**
+     * Este método regresa una lista de todas las personas registradas.
+     * @return Regresa una lista de todas las personas registradas.
+     */
     @Override
     public List<Persona> cargarTodasPersonas() {
         String query = "SELECT p FROM Persona as p";
@@ -96,6 +121,11 @@ public class PersonaDAO implements IPersonaDAO {
         return listPersonas;
     }
 
+    /**
+     * Este método verifica si una persona cuenta con una licencia vigente a partir de su rfc.
+     * @param rfc Representa el rfc a utilizar para la búsqueda.
+     * @return Regresa true en caso de que cuente con una licencia vigente, false en caso contrario.
+     */
     @Override
     public boolean consultarLicenciaVigentePersona(String rfc) {
         String jpql = "SELECT tl FROM TramiteLicencia tl "
@@ -122,6 +152,11 @@ public class PersonaDAO implements IPersonaDAO {
         }
     }
 
+    /**
+     * Este método inserta 20 registros de personas para pruebas.
+     * @return Regresa true en caso de que se haya realizado la operación, false 
+     * en caso de que ya existan suficientes registros para pruebas.
+     */
     @Override
     public boolean insercionMasivaPersonas() {
         if (cargarTodasPersonas().size() >= 15) {
@@ -168,6 +203,11 @@ public class PersonaDAO implements IPersonaDAO {
         }
     }
 
+    /**
+     * Este método valida si una persona es mayor de edad a partir de su rfc.
+     * @param rfc Representa el rfc a utilizar para la validación.
+     * @return Regresa true en caso de que sea mayor de edad, false en caso contrario.
+     */
     @Override
     public boolean validarMayoriaEdadPersona(String rfc) {
         Persona persona = this.consultarPersona(rfc);
