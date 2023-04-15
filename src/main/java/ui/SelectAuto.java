@@ -6,6 +6,7 @@ package ui;
 
 import implementaciones.AutoDAO;
 import interfaces.IConexionBD;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -41,7 +42,7 @@ public class SelectAuto extends javax.swing.JFrame {
         modeloTabla.setRowCount(0);
         String placas = this.txtFieldPlacas.getText();
         List<AutomovilesPlacasDTO> listAutos = new ArrayList<>();
-        if (placas.equalsIgnoreCase("Ingrese su Serie de Placas") || placas.equalsIgnoreCase("")) {
+        if (placas.equalsIgnoreCase("Ingrese su Serie de Placas") || placas.isBlank()) {
             listAutos = autoDAO.cargarTodosLosAutos();
         } else {
             listAutos = autoDAO.cargarAuto(placas);
@@ -242,7 +243,7 @@ public class SelectAuto extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddAutoActionPerformed
 
     private void btnSigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSigActionPerformed
-          this.seleccionarAuto();
+        this.seleccionarAuto();
     }//GEN-LAST:event_btnSigActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
@@ -281,6 +282,33 @@ public class SelectAuto extends javax.swing.JFrame {
         txtFieldPlacas.setText(txtFieldPlacas.getText().trim());
         if (txtFieldPlacas.getText().equals("Ingrese su Serie de Placas")) {
             txtFieldPlacas.setText("");
+        }
+
+        char c = evt.getKeyChar();
+        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+            // Permitir letras del alfabeto
+            if (txtFieldPlacas.getText().length() < 3) {
+                // Permitir hasta 3 letras
+                evt.setKeyChar(Character.toUpperCase(c));
+            } else {
+                evt.consume(); // Ignorar más letras
+            }
+        } else if (c == '-') {
+            // Permitir el guión después de 3 letras
+            if (txtFieldPlacas.getText().length() == 3) {
+                evt.setKeyChar(c);
+            } else {
+                evt.consume(); // Ignorar guión en otro lugar
+            }
+        } else if (c >= '0' && c <= '9') {
+            // Permitir números después del guión
+            if (txtFieldPlacas.getText().length() > 3 && txtFieldPlacas.getText().length() < 7) {
+                evt.setKeyChar(c);
+            } else {
+                evt.consume(); // Ignorar más números
+            }
+        } else {
+            evt.consume(); // Ignorar otros caracteres
         }
     }//GEN-LAST:event_txtFieldPlacasKeyTyped
 

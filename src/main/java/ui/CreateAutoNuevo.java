@@ -6,6 +6,7 @@ package ui;
 
 import implementaciones.AutoDAO;
 import interfaces.IConexionBD;
+import javax.swing.JOptionPane;
 import org.itson.dominio.Auto;
 import org.itson.dominio.Persona;
 import utilidades.AutomovilesPlacasDTO;
@@ -38,28 +39,60 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
         }
     }
 
-    private Auto extraerDatos(){
-        String modelo = this.txtFieldModelo.getText(), 
-                linea = this.txtFieldLinea.getText(), 
-                color = this.txtFieldColor.getText(), 
-                marca = this.txtFieldMarca.getText(), 
+    private Auto extraerDatos() {
+        String modelo = this.txtFieldModelo.getText(),
+                linea = this.txtFieldLinea.getText(),
+                color = this.txtFieldColor.getText(),
+                marca = this.txtFieldMarca.getText(),
                 numSerie = this.txtFieldNumSerie.getText();
-        //Validar campos y mostrar mensaje 
         Auto auto = new Auto(modelo, color, numSerie, linea, marca);
         return auto;
     }
-    
-    private void operacionSiguiente(){
-        AutomovilesPlacasDTO autoPlacas = new AutomovilesPlacasDTO();
-        autoPlacas.setAutomovil(this.extraerDatos());
-        this.abrirRegistroPlacas(autoPlacas);
+
+    private boolean validarAuto(Auto automovilValidar) {
+        String mensaje = "Campo(s) inválido(s) - ";
+        if (automovilValidar.getColor().length() < 3 || automovilValidar.getColor().equalsIgnoreCase("Color")) {
+            mensaje += "color - ";
+        }
+        if (automovilValidar.getNumSerie().length() != 7 || automovilValidar.getNumSerie().equalsIgnoreCase("Num. Serie")) {
+            mensaje += "num_serie - ";
+        }
+        if (automovilValidar.getModelo().length() != 4 || automovilValidar.getModelo().equalsIgnoreCase("Modelo")) {
+            mensaje += "modelo - ";
+        }
+        if (automovilValidar.getLinea().length() < 3 || automovilValidar.getLinea().equalsIgnoreCase("Línea")) {
+            mensaje += "linea - ";
+        }    
+        if(automovilValidar.getMarca().length() < 3 || automovilValidar.getMarca().equalsIgnoreCase("Marca")){
+            mensaje += "marca - ";
+        }    
+            
+        if(mensaje.equals("Campo(s) inválido(s) - ")){
+            return true;
+        }else{
+            this.mostrarMensajePantalla(mensaje);
+            return false;
+        }
     }
-    
-    private void abrirRegistroPlacas(AutomovilesPlacasDTO autoPlacas){
+
+    private void operacionSiguiente() {
+        AutomovilesPlacasDTO autoPlacas = new AutomovilesPlacasDTO();
+        Auto autoIngresado = this.extraerDatos();
+        if (validarAuto(autoIngresado)) {
+            autoPlacas.setAutomovil(autoIngresado);
+            this.abrirRegistroPlacas(autoPlacas);
+        }
+    }
+
+    private void abrirRegistroPlacas(AutomovilesPlacasDTO autoPlacas) {
         new RegistroPlacas(this.conexion, this.persona, autoPlacas, 1500).setVisible(true);
         this.dispose();
     }
-    
+
+    private void mostrarMensajePantalla(String msj) {
+        JOptionPane.showMessageDialog(null, msj, "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -327,6 +360,11 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
         if (txtFieldModelo.getText().equals("Modelo")) {
             txtFieldModelo.setText("");
         }
+
+        char c = evt.getKeyChar();
+        if (!(Character.isDigit(c)) || (txtFieldModelo.getText().length() == 4)) {
+            evt.consume();
+        }
     }//GEN-LAST:event_txtFieldModeloKeyTyped
 
     private void txtFieldLineaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFieldLineaFocusLost
@@ -362,6 +400,11 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
         if (txtFieldLinea.getText().equals("Línea")) {
             txtFieldLinea.setText("");
         }
+
+        char c = evt.getKeyChar();
+        if (!(Character.isLetter(c)) || (txtFieldLinea.getText().length() == 40)) {
+            evt.consume();
+        }
     }//GEN-LAST:event_txtFieldLineaKeyTyped
 
     private void txtFieldNumSerieFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFieldNumSerieFocusLost
@@ -384,7 +427,7 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
     }//GEN-LAST:event_txtFieldNumSerieMouseExited
 
     private void txtFieldNumSerieActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFieldNumSerieActionPerformed
-        
+
     }//GEN-LAST:event_txtFieldNumSerieActionPerformed
 
     private void txtFieldNumSerieKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFieldNumSerieKeyReleased
@@ -396,6 +439,33 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
         txtFieldNumSerie.setText(txtFieldNumSerie.getText().trim());
         if (txtFieldNumSerie.getText().equals("Num. Serie")) {
             txtFieldNumSerie.setText("");
+        }
+
+        char c = evt.getKeyChar();
+        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+            // Permitir letras del alfabeto
+            if (txtFieldNumSerie.getText().length() < 3) {
+                // Permitir hasta 3 letras
+                evt.setKeyChar(Character.toUpperCase(c));
+            } else {
+                evt.consume(); // Ignorar más letras
+            }
+        } else if (c == '-') {
+            // Permitir el guión después de 3 letras
+            if (txtFieldNumSerie.getText().length() == 3) {
+                evt.setKeyChar(c);
+            } else {
+                evt.consume(); // Ignorar guión en otro lugar
+            }
+        } else if (c >= '0' && c <= '9') {
+            // Permitir números después del guión
+            if (txtFieldNumSerie.getText().length() > 3 && txtFieldNumSerie.getText().length() < 7) {
+                evt.setKeyChar(c);
+            } else {
+                evt.consume(); // Ignorar más números
+            }
+        } else {
+            evt.consume(); // Ignorar otros caracteres
         }
     }//GEN-LAST:event_txtFieldNumSerieKeyTyped
 
@@ -432,6 +502,11 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
         if (txtFieldColor.getText().equals("Color")) {
             txtFieldColor.setText("");
         }
+
+        char c = evt.getKeyChar();
+        if (!(Character.isLetter(c)) || (txtFieldColor.getText().length() == 40)) {
+            evt.consume();
+        }
     }//GEN-LAST:event_txtFieldColorKeyTyped
 
     private void txtFieldMarcaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFieldMarcaFocusLost
@@ -466,6 +541,11 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
         txtFieldMarca.setText(txtFieldMarca.getText().trim());
         if (txtFieldMarca.getText().equals("Marca")) {
             txtFieldMarca.setText("");
+        }
+
+        char c = evt.getKeyChar();
+        if (!(Character.isLetter(c)) || (txtFieldMarca.getText().length() == 40)) {
+            evt.consume();
         }
     }//GEN-LAST:event_txtFieldMarcaKeyTyped
 

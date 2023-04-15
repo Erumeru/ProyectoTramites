@@ -9,6 +9,7 @@ import implementaciones.TramitePlacasDAO;
 import interfaces.IConexionBD;
 import java.awt.event.ItemEvent;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -56,6 +57,7 @@ public class HistorialTramites extends javax.swing.JFrame {
 
     private void ajustarInterfaz() {
         if (operacion == ConstantesGUI.HISTORIAL) {
+            btnBuscar.setVisible(false);
             dpFin.setVisible(false);
             dpInicio.setVisible(false);
             txtFieldNombre.setVisible(false);
@@ -63,12 +65,15 @@ public class HistorialTramites extends javax.swing.JFrame {
             lblFondoReutilizar2.setVisible(true);
             btnReporte.setVisible(false);
         } else {
+            btnBuscar.setVisible(true);
             dpFin.setVisible(true);
             dpInicio.setVisible(true);
             txtFieldNombre.setVisible(true);
             lblFondoReutilizar.setVisible(false);
             lblFondoReutilizar2.setVisible(false);
             btnReporte.setVisible(true);
+            this.dpFin.getSettings().setDateRangeLimits(LocalDate.MIN, LocalDate.now());
+            this.dpInicio.getSettings().setDateRangeLimits(LocalDate.MIN, LocalDate.now());
         }
     }
 
@@ -136,6 +141,15 @@ public class HistorialTramites extends javax.swing.JFrame {
             if (operacion == ConstantesGUI.HISTORIAL) {
                 this.mostrarMensajePantalla("Esta persona no ha realizado trámites");
             } else {
+                if (this.dpInicio.getDate() != null && this.dpFin.getDate() != null) {
+                    if (this.dpInicio.getDate().isAfter(this.dpFin.getDate())) {
+                        this.mostrarMensajePantalla("La fecha de inicio está después que la del final");
+                        return;
+                    }
+                }else{
+                    this.mostrarMensajePantalla("Periodo malformado");
+                    return;
+                }
                 this.mostrarMensajePantalla("No hay trámites registrados actualmente en el sistema");
             }
         }

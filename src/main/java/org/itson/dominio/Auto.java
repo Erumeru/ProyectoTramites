@@ -20,27 +20,27 @@ import javax.persistence.Table;
  * @author 233133_233259
  */
 @Entity
-@Table(name="autos")
+@Table(name = "autos")
 public class Auto implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private Long id;
-    
-    @Column(name="modelo",nullable=false, length=20)
+
+    @Column(name = "modelo", nullable = false, length = 20)
     private String modelo;
-    @Column(name="color",nullable=false, length=20)
+    @Column(name = "color", nullable = false, length = 20)
     private String color;
-    @Column(name="numSerie",nullable=false, length=20)
+    @Column(name = "numSerie", nullable = false, length = 20)
     private String numSerie;
-    @Column(name="linea",nullable=false, length=20)
+    @Column(name = "linea", nullable = false, length = 20)
     private String linea;
-    @Column(name="marca",nullable=false, length=20)
+    @Column(name = "marca", nullable = false, length = 20)
     private String marca;
-    @Column(name="nuevo",nullable=false)
+    @Column(name = "nuevo", nullable = false)
     private boolean nuevo;
-    
+
     @OneToMany(mappedBy = "automovil", cascade = {CascadeType.PERSIST})
     private List<Placa> placas;
 
@@ -53,13 +53,14 @@ public class Auto implements Serializable {
         this.marca = marca;
         this.nuevo = nuevo;
     }
-public Auto(String modelo, String color, String numSerie, String linea, String marca) {
+
+    public Auto(String modelo, String color, String numSerie, String linea, String marca) {
         this.modelo = modelo;
         this.color = color;
         this.numSerie = numSerie;
         this.linea = linea;
         this.marca = marca;
-        this.nuevo=true;
+        this.nuevo = true;
     }
 
     public Auto() {
@@ -125,9 +126,7 @@ public Auto(String modelo, String color, String numSerie, String linea, String m
     public void setNuevo(boolean nuevo) {
         this.nuevo = nuevo;
     }
-    
-    
-    
+
     public Long getId() {
         return id;
     }
@@ -160,5 +159,5 @@ public Auto(String modelo, String color, String numSerie, String linea, String m
     public String toString() {
         return "org.itson.dominio.Auto[ id=" + id + " ]";
     }
-    
+
 }
