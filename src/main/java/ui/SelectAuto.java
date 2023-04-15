@@ -5,12 +5,11 @@
 package ui;
 
 import implementaciones.AutoDAO;
-import implementaciones.ConexionBD;
 import interfaces.IConexionBD;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import org.itson.dominio.Auto;
 import org.itson.dominio.Persona;
 import utilidades.AutomovilesPlacasDTO;
 import utilidades.ConstantesGUI;
@@ -21,45 +20,41 @@ import utilidades.ConstantesGUI;
  */
 public class SelectAuto extends javax.swing.JFrame {
 
-    private IConexionBD conexion = new ConexionBD("org.itson_Proyecto2BDA");
+    private IConexionBD conexion;
     private AutoDAO autoDAO;
     private Persona persona;
+
     /**
      * Creates new form SelectAuto
      */
     public SelectAuto(IConexionBD conexion, Persona persona) {
         initComponents();
+        this.conexion = conexion;
         this.autoDAO = new AutoDAO(conexion.crearConexion());
         this.cargarAutos();
-        this.persona=persona;
+        this.persona = persona;
         this.setLocationRelativeTo(null);
-        System.out.println(persona);
     }
 
     private void cargarAutos() {
         DefaultTableModel modeloTabla = (DefaultTableModel) this.tblAutos.getModel();
         modeloTabla.setRowCount(0);
         String placas = this.txtFieldPlacas.getText();
+        List<AutomovilesPlacasDTO> listAutos = new ArrayList<>();
         if (placas.equalsIgnoreCase("Ingrese su Serie de Placas") || placas.equalsIgnoreCase("")) {
-            List<AutomovilesPlacasDTO> listAutos = autoDAO.cargarTodosLosAutos();
-            for (int i = 0; i < listAutos.size(); i++) {
-                if (listAutos.get(i) != null) {
-                    Object[] fila = {listAutos.get(i).getPlacas(), listAutos.get(i).getAutomovil().getNumSerie(), listAutos.get(i).getAutomovil().getMarca(),
-                        listAutos.get(i).getAutomovil().getModelo(), listAutos.get(i).getAutomovil().getColor()};
-                    modeloTabla.addRow(fila);
-                    System.out.println(listAutos.get(i));
-                }
-            }
+            listAutos = autoDAO.cargarTodosLosAutos();
         } else {
-            List<AutomovilesPlacasDTO> listAutos = autoDAO.cargarAuto(placas);
-            for (int i = 0; i < listAutos.size(); i++) {
-                if (listAutos.get(i) != null) {
-                    Object[] fila = {listAutos.get(i).getPlacas(), listAutos.get(i).getAutomovil().getNumSerie(), listAutos.get(i).getAutomovil().getMarca(),
-                        listAutos.get(i).getAutomovil().getModelo(), listAutos.get(i).getAutomovil().getColor()};
-                    modeloTabla.addRow(fila);
-                    System.out.println(listAutos.get(i));
-                }
+            listAutos = autoDAO.cargarAuto(placas);
+        }
+        for (int i = 0; i < listAutos.size(); i++) {
+            if (listAutos.get(i) != null) {
+                Object[] fila = {listAutos.get(i).getPlacas(), listAutos.get(i).getAutomovil().getNumSerie(), listAutos.get(i).getAutomovil().getMarca(),
+                    listAutos.get(i).getAutomovil().getModelo(), listAutos.get(i).getAutomovil().getColor()};
+                modeloTabla.addRow(fila);
             }
+        }
+        if (listAutos.size() == 0) {
+            this.mostrarMensajePantalla("No se encontraron registros");
         }
     }
 
@@ -69,18 +64,29 @@ public class SelectAuto extends javax.swing.JFrame {
             this.setVisible(false);
         }
     }
-    
+
     private void mostrarMensajePantalla(String msj) {
         JOptionPane.showMessageDialog(null, msj, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
-    
+
     private void abrirRegistroPlacas(Persona persona, AutomovilesPlacasDTO auto) {
         if (this.isVisible()) {
             new RegistroPlacas(conexion, persona, auto, 1000).setVisible(true);
             this.setVisible(false);
         }
     }
-    
+
+    private void seleccionarAuto() {
+        Integer indiceRenglonInicial = 0, indiceColumnaPlacas = 0;
+        if (this.tblAutos.getSelectedRow() >= indiceRenglonInicial) {
+            String placasAutoSeleccionadas = (String) this.tblAutos.getModel().getValueAt(this.tblAutos.getSelectedRow(), indiceColumnaPlacas);
+            AutomovilesPlacasDTO autoSeleccionado = this.autoDAO.cargarAuto(placasAutoSeleccionadas).get(0);
+            this.abrirRegistroPlacas(persona, autoSeleccionado);
+        } else {
+            this.mostrarMensajePantalla("Seleccione un auto o realice una búsqueda de autos");
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -236,14 +242,7 @@ public class SelectAuto extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddAutoActionPerformed
 
     private void btnSigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSigActionPerformed
-        Integer indiceRenglonInicial = 0, indiceColumnaPlacas = 0;
-        if (this.tblAutos.getSelectedRow() >= indiceRenglonInicial) {
-            String placasAutoSeleccionadas = (String) this.tblAutos.getModel().getValueAt(this.tblAutos.getSelectedRow(), indiceColumnaPlacas);
-            AutomovilesPlacasDTO autoSeleccionado = this.autoDAO.cargarAuto(placasAutoSeleccionadas).get(0);
-            this.abrirRegistroPlacas(persona, autoSeleccionado);
-        }else{
-            this.mostrarMensajePantalla("Seleccione un auto o realice una búsqueda de autos");
-        }
+          this.seleccionarAuto();
     }//GEN-LAST:event_btnSigActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed

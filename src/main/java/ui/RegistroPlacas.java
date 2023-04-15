@@ -4,15 +4,12 @@
  */
 package ui;
 
-import implementaciones.ConexionBD;
 import implementaciones.PlacasDAO;
 import implementaciones.TramitePlacasDAO;
 import interfaces.IConexionBD;
 import interfaces.IPlacasDAO;
 import java.util.GregorianCalendar;
-import java.util.Random;
 import javax.swing.JOptionPane;
-import org.itson.dominio.Auto;
 import org.itson.dominio.Persona;
 import org.itson.dominio.Placa;
 import org.itson.dominio.TramitePlacas;
@@ -25,7 +22,7 @@ import utilidades.GeneradorPlacas;
  */
 public class RegistroPlacas extends javax.swing.JFrame {
 
-    private IConexionBD conexion = new ConexionBD("org.itson_Proyecto2BDA");
+    private IConexionBD conexion;
     private TramitePlacasDAO tramitePlacasDAO;
     private IPlacasDAO placasDAO;
     private Persona persona;
@@ -38,6 +35,7 @@ public class RegistroPlacas extends javax.swing.JFrame {
      */
     public RegistroPlacas(IConexionBD conexion, Persona persona, AutomovilesPlacasDTO auto, int costo) {
         initComponents();
+        this.conexion = conexion;
         this.tramitePlacasDAO = new TramitePlacasDAO(conexion.crearConexion());
         this.persona = persona;
         this.auto = auto;
@@ -82,6 +80,18 @@ public class RegistroPlacas extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null, msj, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    private void confirmarTramite(){
+        if (costo == 1000) {
+            Placa placaAnterior = this.placasDAO.obtenerPlaca(this.auto.getPlacas());
+            if (placaAnterior != null) {
+                this.placasDAO.cancelarPlacasAuto(placaAnterior);
+            }
+        }
+        this.tramitePlacasDAO.nuevoTramite(new Placa(new TramitePlacas(costo, new GregorianCalendar(), persona), this.placaNueva, auto.getAutomovil()));
+        this.mostrarMensajePantalla("Se ha realizado el trámite de las placas");
+        this.abrirMenuPrincipal();
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -242,15 +252,7 @@ public class RegistroPlacas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
-        if (costo == 1000) {
-            Placa placaAnterior = this.placasDAO.obtenerPlaca(this.auto.getPlacas());
-            if (placaAnterior != null) {
-                this.placasDAO.cancelarPlacasAuto(placaAnterior);
-            }
-        }
-        this.tramitePlacasDAO.nuevoTramite(new Placa(new TramitePlacas(costo, new GregorianCalendar(), persona), this.placaNueva, auto.getAutomovil()));
-        this.mostrarMensajePantalla("Se ha realizado el trámite de las placas");
-        this.abrirMenuPrincipal();
+        this.confirmarTramite();
     }//GEN-LAST:event_btnOkActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed

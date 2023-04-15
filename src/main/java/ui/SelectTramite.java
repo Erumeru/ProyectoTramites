@@ -7,9 +7,7 @@ package ui;
 import implementaciones.PersonaDAO;
 import interfaces.IConexionBD;
 import interfaces.IPersonaDAO;
-import javax.persistence.EntityManager;
 import javax.swing.JOptionPane;
-import org.itson.dominio.Persona;
 import utilidades.ConstantesGUI;
 
 /**

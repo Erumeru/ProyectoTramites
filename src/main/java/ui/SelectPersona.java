@@ -9,9 +9,9 @@ import implementaciones.PersonaDAO;
 import interfaces.IConexionBD;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
-import javax.swing.plaf.PanelUI;
 import javax.swing.table.DefaultTableModel;
 import org.itson.dominio.Persona;
 import utilidades.ConstantesGUI;
@@ -23,7 +23,7 @@ import utilidades.ParametrosBusquedaPersonas;
  */
 public class SelectPersona extends javax.swing.JFrame {
 
-    private IConexionBD conexion = new ConexionBD("org.itson_Proyecto2BDA");
+    private IConexionBD conexion;
     private PersonaDAO persona;
     private ConstantesGUI operacion;
 
@@ -33,35 +33,35 @@ public class SelectPersona extends javax.swing.JFrame {
     public SelectPersona(IConexionBD conexion, ConstantesGUI gui) {
         initComponents();
         this.setLocationRelativeTo(null);
+        this.conexion = conexion;
         this.persona = new PersonaDAO(conexion.crearConexion());
         this.operacion = gui;
         this.cargarPersonas();
+        this.establecerLimiteFecha();
     }
 
+    private void establecerLimiteFecha(){
+        LocalDate fechaLimiteInferior = LocalDate.of(1900, 1, 1);
+        LocalDate fechaLimiteSuperior = LocalDate.now();
+        DpFecha.getSettings().setDateRangeLimits(fechaLimiteInferior, fechaLimiteSuperior);
+    }
+    
     private void cargarPersonas() {
         SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
         DefaultTableModel modeloTabla = (DefaultTableModel) this.tblPersonas.getModel();
         modeloTabla.setRowCount(0);
+        List<Persona> listaPersonas = new ArrayList<>();
         if (this.txtFieldNombre.getText().equalsIgnoreCase("Ingrese su Nombre") && this.txtFieldRFC.getText().equalsIgnoreCase("Ingrese su RFC") && this.DpFecha.getDate() == null) {
-            List<Persona> listaPersonas = persona.cargarTodasPersonas();
-            for (int i = 0; i < listaPersonas.size(); i++) {
-                if (listaPersonas.get(i) != null) {
-                    Object[] fila = {listaPersonas.get(i).getNombres(), listaPersonas.get(i).getApellido_paterno(),
-                        listaPersonas.get(i).getApellido_materno(), listaPersonas.get(i).getRfc(), formateador.format((listaPersonas.get(i).getFecha_nacimiento()).getTime())};
-                    modeloTabla.addRow(fila);
-                    System.out.println(listaPersonas.get(i));
-                }
-            }
+            listaPersonas = persona.cargarTodasPersonas();
         } else {
             ParametrosBusquedaPersonas parametros = new ParametrosBusquedaPersonas(this.txtFieldRFC.getText(), this.txtFieldNombre.getText(), this.DpFecha.getDate());
-            List<Persona> listaPersonas = persona.consultarPersonas(parametros);
-            for (int i = 0; i < listaPersonas.size(); i++) {
-                if (listaPersonas.get(i) != null) {
-                    Object[] fila = {listaPersonas.get(i).getNombres(), listaPersonas.get(i).getApellido_paterno(),
-                        listaPersonas.get(i).getApellido_materno(), listaPersonas.get(i).getRfc(), formateador.format((listaPersonas.get(i).getFecha_nacimiento()).getTime())};
-                    modeloTabla.addRow(fila);
-                    System.out.println(listaPersonas.get(i));
-                }
+            listaPersonas = persona.consultarPersonas(parametros);
+        }
+        for (int i = 0; i < listaPersonas.size(); i++) {
+            if (listaPersonas.get(i) != null) {
+                Object[] fila = {listaPersonas.get(i).getNombres(), listaPersonas.get(i).getApellido_paterno(),
+                    listaPersonas.get(i).getApellido_materno(), listaPersonas.get(i).getRfc(), formateador.format((listaPersonas.get(i).getFecha_nacimiento()).getTime())};
+                modeloTabla.addRow(fila);
             }
         }
     }
@@ -101,53 +101,58 @@ public class SelectPersona extends javax.swing.JFrame {
         }
     }
 
+    private void operacionLicencia(String rfcPersonaSeleccionada) {
+        boolean vigencia = persona.consultarLicenciaVigentePersona(rfcPersonaSeleccionada),
+                mayoriaEdad = persona.validarMayoriaEdadPersona(rfcPersonaSeleccionada);
+
+        if (vigencia && mayoriaEdad) {
+            this.mostrarMensajePantalla("No se puede registrar licencia para esta persona debido a que ya cuenta con una vigente");
+        } else if (!vigencia && mayoriaEdad) {
+            this.mostrarMensajePantalla("Cumple con los requisitos para seguir con el trámite");
+            this.abrirVentanaLicencia();
+        } else if (!vigencia && !mayoriaEdad) {
+            this.mostrarMensajePantalla("No se puede registrar licencia para esta persona debido a que es menor de edad");
+        } else {
+            this.mostrarMensajePantalla("No se puede registrar licencia para esta persona debido a que es menor de edad");
+        }
+    }
+
+    private void operacionPlacas(String rfcPersonaSeleccionada) {
+        boolean vigencia = persona.consultarLicenciaVigentePersona(rfcPersonaSeleccionada),
+                mayoriaEdad = persona.validarMayoriaEdadPersona(rfcPersonaSeleccionada);
+        if (vigencia && mayoriaEdad) {
+            this.mostrarMensajePantalla("Cumple con los requisitos para seguir con el trámite");
+            this.abrirVentanaAutomoviles();
+        } else if (!vigencia && mayoriaEdad) {
+            this.mostrarMensajePantalla("No se puede seguir con el trámite debido a que no cuenta con una licencia vigente");
+        } else if (!vigencia && !mayoriaEdad) {
+            this.mostrarMensajePantalla("No se puede seguir con el trámite debido a que no cuenta con una licencia vigente y es menor de edad");
+        } else {
+            this.mostrarMensajePantalla("No se puede seguir con el trámite debido a que es menor de edad");
+        }
+    }
+
+    private void operacionHistorial(String rfcPersonaSeleccionada) {
+        boolean mayoriaEdad = persona.validarMayoriaEdadPersona(rfcPersonaSeleccionada);
+        if (mayoriaEdad) {
+            this.mostrarMensajePantalla("Cumple con los requisitos para seguir con la operación");
+            this.abrirMenuReporte(ConstantesGUI.HISTORIAL);
+        } else {
+            this.mostrarMensajePantalla("No se puede seguir con la operación debido a que es menor de edad");
+        }
+    }
+
     private void siguiente() {
         Integer indiceRenglonInicial = 0, indiceColumnaRFC = 3;
         if (this.tblPersonas.getSelectedRow() >= indiceRenglonInicial) {
             String rfcPersonaSeleccionada = (String) this.tblPersonas.getModel().getValueAt(this.tblPersonas.getSelectedRow(), indiceColumnaRFC);
             if (this.operacion == ConstantesGUI.LICENCIAS) {
-
-                boolean vigencia = persona.consultarLicenciaVigentePersona(rfcPersonaSeleccionada),
-                        mayoriaEdad = persona.validarMayoriaEdadPersona(rfcPersonaSeleccionada);
-
-                if (vigencia && mayoriaEdad) {
-                    this.mostrarMensajePantalla("No se puede registrar licencia para esta persona debido a que ya cuenta con una vigente");
-                } else if (!vigencia && mayoriaEdad) {
-                    this.mostrarMensajePantalla("Cumple con los requisitos para seguir con el trámite");
-                    this.abrirVentanaLicencia();
-                } else if (!vigencia && !mayoriaEdad) {
-                    this.mostrarMensajePantalla("No se puede registrar licencia para esta persona debido a que es menor de edad");
-                } else {
-                    this.mostrarMensajePantalla("No se puede registrar licencia para esta persona debido a que es menor de edad");
-                }
+                this.operacionLicencia(rfcPersonaSeleccionada);
             } else if (this.operacion == ConstantesGUI.PLACAS) {
-
-                boolean vigencia = persona.consultarLicenciaVigentePersona(rfcPersonaSeleccionada),
-                        mayoriaEdad = persona.validarMayoriaEdadPersona(rfcPersonaSeleccionada);
-
-                if (vigencia && mayoriaEdad) {
-                    this.mostrarMensajePantalla("Cumple con los requisitos para seguir con el trámite");
-                    this.abrirVentanaAutomoviles();
-                } else if (!vigencia && mayoriaEdad) {
-                    this.mostrarMensajePantalla("No se puede seguir con el trámite debido a que no cuenta con una licencia vigente");
-                } else if (!vigencia && !mayoriaEdad) {
-                    this.mostrarMensajePantalla("No se puede seguir con el trámite debido a que no cuenta con una licencia vigente y es menor de edad");
-                } else {
-                    this.mostrarMensajePantalla("No se puede seguir con el trámite debido a que es menor de edad");
-                }
-
+                this.operacionPlacas(rfcPersonaSeleccionada);
             } else if (this.operacion == ConstantesGUI.HISTORIAL) {
-                boolean mayoriaEdad = persona.validarMayoriaEdadPersona(rfcPersonaSeleccionada);
-                if(mayoriaEdad){
-                    this.mostrarMensajePantalla("Cumple con los requisitos para seguir con la operación");
-                    this.abrirMenuReporte(ConstantesGUI.HISTORIAL);
-                }else{
-                    this.mostrarMensajePantalla("No se puede seguir con la operación debido a que es menor de edad");
-                }
-            } else {
-                System.out.println("Operación inválida");
+                this.operacionHistorial(rfcPersonaSeleccionada);
             }
-
         } else {
             this.mostrarMensajePantalla("Seleccione a una persona o realice una búsqueda de personas");
         }
@@ -247,10 +252,10 @@ public class SelectPersona extends javax.swing.JFrame {
         });
         jPanel1.add(btnSig, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 590, -1, -1));
 
-        txtFieldNombre.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
-        txtFieldNombre.setForeground(new java.awt.Color(153, 153, 153));
         txtFieldNombre.setText("Ingrese su Nombre");
         txtFieldNombre.setBorder(null);
+        txtFieldNombre.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
+        txtFieldNombre.setForeground(new java.awt.Color(153, 153, 153));
         txtFieldNombre.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 txtFieldNombreFocusLost(evt);
@@ -363,6 +368,12 @@ public class SelectPersona extends javax.swing.JFrame {
         txtFieldRFC.setText(txtFieldRFC.getText().trim());
         if (txtFieldRFC.getText().equals("Ingrese su RFC")) {
             txtFieldRFC.setText("");
+        }
+        
+        // Permitir solo letras y números
+        char c = evt.getKeyChar();
+        if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))) {
+            evt.consume();
         }
     }//GEN-LAST:event_txtFieldRFCKeyTyped
 

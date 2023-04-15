@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import javax.persistence.TypedQuery;
-import org.itson.dominio.Persona;
 import org.itson.dominio.Placa;
 import utilidades.ParametrosBusquedaTramites;
 import utilidades.TramitesDTO;
@@ -78,7 +77,7 @@ public class TramitePlacasDAO implements ITramitePlacasDAO {
     @Override
     public List<TramitesDTO> cargarTramites(ParametrosBusquedaTramites parametros) {
         Set<TramitesDTO> consultaFiltros = new HashSet<>();
-        //0 - nombres  1 - apellidoPaterno  2 - costo  3 - fechaExpedicion  4 - idTramite
+        //0 - nombres  1 - apellidoPaterno  2 - costo  3 - fechaExpedicion  4 - idTramite 5 - apellidoMaterno
 
         if (parametros.getFechaInicio() != null && parametros.getFechaFin() != null) {
             Calendar fechaInicio = Calendar.getInstance();
@@ -101,9 +100,9 @@ public class TramitePlacasDAO implements ITramitePlacasDAO {
             Set<TramitesDTO> consultaFiltroFecha = new HashSet<>(listaFecha);
             consultaFiltros.addAll(consultaFiltroFecha);
         }
-        if (!parametros.getNombrePersona().equalsIgnoreCase("Ingrese su Nombre") && !parametros.getNombrePersona().equals("")) {
+        if (!parametros.getNombrePersona().equalsIgnoreCase("Ingrese su Nombre") && !parametros.getNombrePersona().isBlank()) {
             List<TramitesDTO> listaNombresSimilares = new ArrayList<>();
-            String jpql = "SELECT p.nombres, p.apellido_paterno, tl.costo, tl.fechaExpedicion, tl.id FROM TramitePlacas tl "
+            String jpql = "SELECT p.nombres, p.apellido_paterno, tl.costo, tl.fechaExpedicion, tl.id, p.apellido_materno FROM TramitePlacas tl "
                     + "INNER JOIN tl.persona p";
 
             TypedQuery<Object[]> query = entityManager.createQuery(jpql, Object[].class);
@@ -111,7 +110,7 @@ public class TramitePlacasDAO implements ITramitePlacasDAO {
             List<Object[]> resultados = query.getResultList();
             for (Object[] tramite : resultados) {
                 TramitesDTO tramiteIteracion = new TramitesDTO((Long) tramite[4], (Integer) tramite[2], (Calendar) tramite[3], "Placa", (String) tramite[0], (String) tramite[1]);
-                String nombreCompleto = tramiteIteracion.getNombrePersona() + " " + tramiteIteracion.getApellidoPersona();
+                String nombreCompleto = tramiteIteracion.getNombrePersona() + " " + tramiteIteracion.getApellidoPersona() + " " + (String) tramite[5];
                 if ((nombreCompleto.toUpperCase()).contains(parametros.getNombrePersona().toUpperCase().trim())) {
                     listaNombresSimilares.add(tramiteIteracion);
                 }

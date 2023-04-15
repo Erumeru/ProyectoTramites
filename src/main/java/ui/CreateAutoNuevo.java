@@ -5,7 +5,6 @@
 package ui;
 
 import implementaciones.AutoDAO;
-import implementaciones.ConexionBD;
 import interfaces.IConexionBD;
 import org.itson.dominio.Auto;
 import org.itson.dominio.Persona;
@@ -16,19 +15,51 @@ import utilidades.AutomovilesPlacasDTO;
  * @author eruma
  */
 public class CreateAutoNuevo extends javax.swing.JFrame {
-    private IConexionBD conexion = new ConexionBD("org.itson_Proyecto2BDA");
+
+    private IConexionBD conexion;
     private AutoDAO autoDAO;
     private Persona persona;
+
     /**
      * Creates new form CreateAutoNuevo
      */
     public CreateAutoNuevo(IConexionBD conexion, Persona persona) {
         initComponents();
+        this.conexion = conexion;
         this.autoDAO = new AutoDAO(conexion.crearConexion());
-        this.persona=persona;
+        this.persona = persona;
         this.setLocationRelativeTo(null);
     }
 
+    private void abrirVentanaAutomoviles() {
+        if (this.isVisible()) {
+            new SelectAuto(conexion, this.persona).setVisible(true);
+            this.setVisible(false);
+        }
+    }
+
+    private Auto extraerDatos(){
+        String modelo = this.txtFieldModelo.getText(), 
+                linea = this.txtFieldLinea.getText(), 
+                color = this.txtFieldColor.getText(), 
+                marca = this.txtFieldMarca.getText(), 
+                numSerie = this.txtFieldNumSerie.getText();
+        //Validar campos y mostrar mensaje 
+        Auto auto = new Auto(modelo, color, numSerie, linea, marca);
+        return auto;
+    }
+    
+    private void operacionSiguiente(){
+        AutomovilesPlacasDTO autoPlacas = new AutomovilesPlacasDTO();
+        autoPlacas.setAutomovil(this.extraerDatos());
+        this.abrirRegistroPlacas(autoPlacas);
+    }
+    
+    private void abrirRegistroPlacas(AutomovilesPlacasDTO autoPlacas){
+        new RegistroPlacas(this.conexion, this.persona, autoPlacas, 1500).setVisible(true);
+        this.dispose();
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -256,16 +287,11 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSigActionPerformed
-       String modelo=this.txtFieldModelo.getText(),linea=this.txtFieldLinea.getText(),color=this.txtFieldColor.getText(),marca=this.txtFieldMarca.getText(),numSerie=this.txtFieldNumSerie.getText();
-       Auto auto=new Auto(modelo,color,numSerie,linea,marca);
-       AutomovilesPlacasDTO autoPlacas = new AutomovilesPlacasDTO();
-       autoPlacas.setAutomovil(auto);
-       new RegistroPlacas(this.conexion,this.persona,autoPlacas,1500).setVisible(true);
-       this.dispose();
+        this.operacionSiguiente();
     }//GEN-LAST:event_btnSigActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-
+        this.abrirVentanaAutomoviles();
     }//GEN-LAST:event_btnCancelActionPerformed
 
     private void txtFieldModeloFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFieldModeloFocusLost
@@ -276,7 +302,7 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
 
     private void txtFieldModeloMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtFieldModeloMouseEntered
         if (txtFieldModelo.getText().equals("Modelo"))
-        txtFieldModelo.setText("");
+            txtFieldModelo.setText("");
     }//GEN-LAST:event_txtFieldModeloMouseEntered
 
     private void txtFieldModeloMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtFieldModeloMouseExited
@@ -311,7 +337,7 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
 
     private void txtFieldLineaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtFieldLineaMouseEntered
         if (txtFieldLinea.getText().equals("Línea"))
-        txtFieldLinea.setText("");
+            txtFieldLinea.setText("");
     }//GEN-LAST:event_txtFieldLineaMouseEntered
 
     private void txtFieldLineaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtFieldLineaMouseExited
@@ -346,7 +372,7 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
 
     private void txtFieldNumSerieMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtFieldNumSerieMouseEntered
         if (txtFieldNumSerie.getText().equals("Num. Serie"))
-        txtFieldNumSerie.setText("");
+            txtFieldNumSerie.setText("");
     }//GEN-LAST:event_txtFieldNumSerieMouseEntered
 
     private void txtFieldNumSerieMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtFieldNumSerieMouseExited
@@ -358,7 +384,7 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
     }//GEN-LAST:event_txtFieldNumSerieMouseExited
 
     private void txtFieldNumSerieActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFieldNumSerieActionPerformed
-
+        
     }//GEN-LAST:event_txtFieldNumSerieActionPerformed
 
     private void txtFieldNumSerieKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFieldNumSerieKeyReleased
@@ -381,7 +407,7 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
 
     private void txtFieldColorMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtFieldColorMouseEntered
         if (txtFieldColor.getText().equals("Color"))
-        txtFieldColor.setText("");
+            txtFieldColor.setText("");
     }//GEN-LAST:event_txtFieldColorMouseEntered
 
     private void txtFieldColorMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtFieldColorMouseExited
@@ -416,7 +442,7 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
 
     private void txtFieldMarcaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtFieldMarcaMouseEntered
         if (txtFieldMarca.getText().equals("Marca"))
-        txtFieldMarca.setText("");
+            txtFieldMarca.setText("");
     }//GEN-LAST:event_txtFieldMarcaMouseEntered
 
     private void txtFieldMarcaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtFieldMarcaMouseExited
@@ -442,7 +468,6 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
             txtFieldMarca.setText("");
         }
     }//GEN-LAST:event_txtFieldMarcaKeyTyped
-
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

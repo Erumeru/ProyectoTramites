@@ -11,8 +11,7 @@ import java.awt.event.ItemEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 import net.sf.jasperreports.engine.JRException;
@@ -73,45 +72,45 @@ public class HistorialTramites extends javax.swing.JFrame {
         }
     }
 
-    private void cargarTramites() {
+    private void operacionHistorial(List<TramitesDTO> tramites, String tipo) {
+        if (tipo.equals("Todo")) {
+            tramites.addAll(licenciasDAO.cargarTramites(personaSeleccionada.getId()));
+            tramites.addAll(placasDAO.cargarTramites(personaSeleccionada.getId()));
+        } else if (tipo.equals("Placa")) {
+            tramites.addAll(placasDAO.cargarTramites(personaSeleccionada.getId()));
+        } else {
+            tramites.addAll(licenciasDAO.cargarTramites(personaSeleccionada.getId()));
+        }
+    }
+
+    private void operacionReporte(List<TramitesDTO> tramites, String tipo) {
+        if (tipo.equals("Todo")) {
+            tramites.addAll(licenciasDAO.cargarTramites(new ParametrosBusquedaTramites(this.dpInicio.getDate(), this.dpFin.getDate(), this.txtFieldNombre.getText())));
+            tramites.addAll(placasDAO.cargarTramites(new ParametrosBusquedaTramites(this.dpInicio.getDate(), this.dpFin.getDate(), this.txtFieldNombre.getText())));
+            if ((this.txtFieldNombre.getText().equalsIgnoreCase("Ingrese su Nombre") || this.txtFieldNombre.getText().equals(""))
+                    && this.dpInicio.getDate() == null && this.dpFin.getDate() == null) {
+                tramites.addAll(licenciasDAO.cargarTodosTramites());
+                tramites.addAll(placasDAO.cargarTodosTramites());
+            }
+        } else if (tipo.equals("Placa")) {
+            tramites.addAll(placasDAO.cargarTramites(new ParametrosBusquedaTramites(this.dpInicio.getDate(), this.dpFin.getDate(), this.txtFieldNombre.getText())));
+            if ((this.txtFieldNombre.getText().equalsIgnoreCase("Ingrese su Nombre") || this.txtFieldNombre.getText().equals(""))
+                    && this.dpInicio.getDate() == null && this.dpFin.getDate() == null) {
+                tramites.addAll(placasDAO.cargarTodosTramites());
+            }
+        } else {
+            tramites.addAll(licenciasDAO.cargarTramites(new ParametrosBusquedaTramites(this.dpInicio.getDate(), this.dpFin.getDate(), this.txtFieldNombre.getText())));
+            if ((this.txtFieldNombre.getText().equalsIgnoreCase("Ingrese su Nombre") || this.txtFieldNombre.getText().equals(""))
+                    && this.dpInicio.getDate() == null && this.dpFin.getDate() == null) {
+                tramites.addAll(licenciasDAO.cargarTodosTramites());
+            }
+        }
+    }
+
+    private void llenarTabla(List<TramitesDTO> tramites) {
         SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
         DefaultTableModel modeloTabla = (DefaultTableModel) this.tblTramites.getModel();
         modeloTabla.setRowCount(0);
-        String tipo = (String) this.cbxTipo.getSelectedItem();
-        List<TramitesDTO> tramites = new ArrayList<>();
-        if (operacion == ConstantesGUI.HISTORIAL) {
-            if (tipo.equals("Todo")) {
-                tramites.addAll(licenciasDAO.cargarTramites(personaSeleccionada.getId()));
-                tramites.addAll(placasDAO.cargarTramites(personaSeleccionada.getId()));
-            } else if (tipo.equals("Placa")) {
-                tramites.addAll(placasDAO.cargarTramites(personaSeleccionada.getId()));
-            } else {
-                tramites.addAll(licenciasDAO.cargarTramites(personaSeleccionada.getId()));
-            }
-        } else {
-            if (tipo.equals("Todo")) {
-                tramites.addAll(licenciasDAO.cargarTramites(new ParametrosBusquedaTramites(this.dpInicio.getDate(), this.dpFin.getDate(), this.txtFieldNombre.getText())));
-                tramites.addAll(placasDAO.cargarTramites(new ParametrosBusquedaTramites(this.dpInicio.getDate(), this.dpFin.getDate(), this.txtFieldNombre.getText())));
-                if ((this.txtFieldNombre.getText().equalsIgnoreCase("Ingrese su Nombre") || this.txtFieldNombre.getText().equals(""))
-                        && this.dpInicio.getDate() == null && this.dpFin.getDate() == null) {
-                    tramites.addAll(licenciasDAO.cargarTodosTramites());
-                    tramites.addAll(placasDAO.cargarTodosTramites());
-                }
-            } else if (tipo.equals("Placa")) {
-                tramites.addAll(placasDAO.cargarTramites(new ParametrosBusquedaTramites(this.dpInicio.getDate(), this.dpFin.getDate(), this.txtFieldNombre.getText())));
-                if ((this.txtFieldNombre.getText().equalsIgnoreCase("Ingrese su Nombre") || this.txtFieldNombre.getText().equals(""))
-                        && this.dpInicio.getDate() == null && this.dpFin.getDate() == null) {
-                    tramites.addAll(placasDAO.cargarTodosTramites());
-                }
-            } else {
-                tramites.addAll(licenciasDAO.cargarTramites(new ParametrosBusquedaTramites(this.dpInicio.getDate(), this.dpFin.getDate(), this.txtFieldNombre.getText())));
-                if ((this.txtFieldNombre.getText().equalsIgnoreCase("Ingrese su Nombre") || this.txtFieldNombre.getText().equals(""))
-                        && this.dpInicio.getDate() == null && this.dpFin.getDate() == null) {
-                    tramites.addAll(licenciasDAO.cargarTodosTramites());
-                }
-            }
-
-        }
         for (int i = 0; i < tramites.size(); i++) {
             if (tramites.get(i) != null) {
                 Object[] fila = {tramites.get(i).getTipoTramite(), ("$" + tramites.get(i).getCostoTramite()), formateador.format((tramites.get(i).getFechaExpedicion()).getTime()),
@@ -119,15 +118,52 @@ public class HistorialTramites extends javax.swing.JFrame {
                 modeloTabla.addRow(fila);
             }
         }
-        
-        this.reporteJasper=new TramitesDataSource(tramites);
-        
+    }
+
+    private void cargarTramites() {
+        String tipo = (String) this.cbxTipo.getSelectedItem();
+        List<TramitesDTO> tramites = new ArrayList<>();
+
+        if (operacion == ConstantesGUI.HISTORIAL) {
+            this.operacionHistorial(tramites, tipo);
+        } else {
+            this.operacionReporte(tramites, tipo);
+        }
+
+        this.llenarTabla(tramites);
+
+        if (tramites.size() == 0) {
+            if (operacion == ConstantesGUI.HISTORIAL) {
+                this.mostrarMensajePantalla("Esta persona no ha realizado trámites");
+            } else {
+                this.mostrarMensajePantalla("No hay trámites registrados actualmente en el sistema");
+            }
+        }
+
+        this.reporteJasper = new TramitesDataSource(tramites);
+    }
+
+    private void mostrarMensajePantalla(String msj) {
+        JOptionPane.showMessageDialog(null, msj, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void abrirMenuPrincipal() {
         if (this.isVisible()) {
             new SelectTramite(conexion).setVisible(true);
             this.setVisible(false);
+        }
+    }
+
+    private void generarReporte() {
+        //Se genera el reporte utilizando la libreria JasperReports.
+        try {
+            JasperReport report = (JasperReport) JRLoader.loadObjectFromFile("src\\main\\java\\reportes\\MaritElmer.jasper");
+            JasperPrint jPrint = JasperFillManager.fillReport(report, null, this.reporteJasper.getDataSource());
+            JasperViewer view = new JasperViewer(jPrint, false);
+            view.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            view.setVisible(true);
+        } catch (JRException ex) {
+            ex.getMessage();
         }
     }
 
@@ -363,17 +399,7 @@ public class HistorialTramites extends javax.swing.JFrame {
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReporteActionPerformed
-       //Se genera el reporte utilizando la libreria JasperReports.
-        try {
-            JasperReport report= (JasperReport) JRLoader.loadObjectFromFile("src\\main\\java\\reportes\\MaritElmer.jasper");
-            JasperPrint jPrint= JasperFillManager.fillReport(report, null,this.reporteJasper.getDataSource());
-            JasperViewer view=new JasperViewer(jPrint, false);
-            view.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-            view.setVisible(true);
-        } catch (JRException ex) {
-            ex.getMessage();
-        }
-        
+        this.generarReporte();
     }//GEN-LAST:event_btnReporteActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed

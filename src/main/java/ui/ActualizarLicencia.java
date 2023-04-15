@@ -4,7 +4,6 @@
  */
 package ui;
 
-import implementaciones.ConexionBD;
 import implementaciones.TramiteLicenciasDAO;
 import interfaces.IConexionBD;
 import java.awt.event.ItemEvent;
