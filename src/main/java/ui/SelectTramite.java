@@ -11,15 +11,22 @@ import javax.swing.JOptionPane;
 import utilidades.ConstantesGUI;
 
 /**
- *
- * @author eruma
+ * UI para seleccionar un trámite
+ * @author 233133_233259
  */
 public class SelectTramite extends javax.swing.JFrame {
 
+    /**
+     * Conexion con la base de datos
+     */
     private IConexionBD conexion;
+    /**
+     * Interfaz IPersonaDAO
+     */
     private IPersonaDAO personaDAO;
     
     /**
+     * Constructor que crea la conexión con la base de datos e inicializa la ventana de selección de trámites
      * Creates new form SelectTramite
      */
     public SelectTramite(IConexionBD conexion) {
@@ -29,6 +36,10 @@ public class SelectTramite extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
     }
 
+    /**
+     * Método que abre el buscador de las personas mediante la constante brindada
+     * @param gui Constante que indica la operación al BuscadorPersonas
+     */
     private void abrirBuscadorPersonas(ConstantesGUI gui) {
         if (this.isVisible()) {
             new SelectPersona(conexion, gui).setVisible(true);
@@ -36,6 +47,10 @@ public class SelectTramite extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * Método que abre el menú de reportes (HistorialTramites) mediante la constante dada 
+     * @param gui Constante que indica la operación al HistorialTramites
+     */
     private void abrirMenuReporte(ConstantesGUI gui) {
         if (this.isVisible()) {
             new HistorialTramites(conexion, gui, null).setVisible(true);
@@ -43,6 +58,10 @@ public class SelectTramite extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * Método que muestra un mensaje en la pantalla
+     * @param msj mensaje a mostrar
+     */
     private void mostrarMensajePantalla(String msj) {
         JOptionPane.showMessageDialog(null, msj, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
@@ -155,14 +174,26 @@ public class SelectTramite extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Método que abre el buscador de personas para trámites de licencias
+     * @param evt evento del actionPerformed
+     */
     private void btnLicenciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLicenciasActionPerformed
         abrirBuscadorPersonas(ConstantesGUI.LICENCIAS);
     }//GEN-LAST:event_btnLicenciasActionPerformed
 
+    /**
+     * Método que abre el buscador de personas para trámite de placas
+     * @param evt evento del actionPerformed
+     */
     private void btnPlacasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlacasActionPerformed
         abrirBuscadorPersonas(ConstantesGUI.PLACAS);
     }//GEN-LAST:event_btnPlacasActionPerformed
 
+    /**
+     * Método que reliza una inserción masiva de personas
+     * @param evt evento del actionPerformed
+     */
     private void btnAddUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddUserActionPerformed
         if(personaDAO.insercionMasivaPersonas()){
             mostrarMensajePantalla("Se han insertado 20 registros de Personas para pruebas");
@@ -172,10 +203,18 @@ public class SelectTramite extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnAddUserActionPerformed
 
+    /**
+     * Método que abre el menú de reporte para el reporte
+     * @param evt evento del actionPerformed
+     */
     private void btnConsultaReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultaReporteActionPerformed
         this.abrirMenuReporte(ConstantesGUI.REPORTE);
     }//GEN-LAST:event_btnConsultaReporteActionPerformed
 
+    /**
+     * Método que abre el buscador de personas para el historial
+     * @param evt evento del actionPerformed
+     */
     private void btnUserHistorialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUserHistorialActionPerformed
         this.abrirBuscadorPersonas(ConstantesGUI.HISTORIAL);
     }//GEN-LAST:event_btnUserHistorialActionPerformed

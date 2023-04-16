@@ -17,20 +17,42 @@ import utilidades.AutomovilesPlacasDTO;
 import utilidades.GeneradorPlacas;
 
 /**
- *
- * @author eruma
+ * UI para Registrar Placas de un vehículo
+ * @author 233133_233259
  */
 public class RegistroPlacas extends javax.swing.JFrame {
 
+    /**
+     * Conexión con la base
+     */
     private IConexionBD conexion;
+    /**
+     * DAO para manejar los trámites de placas
+     */
     private TramitePlacasDAO tramitePlacasDAO;
+    /**
+     * Interfaz IPlacasDAO para manejar operaciones con las placas
+     */
     private IPlacasDAO placasDAO;
+    /**
+     * Persona a la cual se le atribuye el trámite
+     */
     private Persona persona;
+    /**
+     * DTO que contiene la información de un auto mediante un AutomovilesPlacasDTO
+     */
     private AutomovilesPlacasDTO auto;
+    /**
+     * Costo del trámite
+     */
     private int costo;
+    /**
+     * String de la placa nueva
+     */
     private String placaNueva;
 
     /**
+     * Constructor que inicializa la UI con la información dada en los parámetros.
      * Creates new form RegistroPlacas
      */
     public RegistroPlacas(IConexionBD conexion, Persona persona, AutomovilesPlacasDTO auto, int costo) {
@@ -47,6 +69,9 @@ public class RegistroPlacas extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
     }
 
+    /**
+     * Muestra las placas con la información de las nuevas placas.
+     */
     private void mostrarPlacas() {
         if (costo == 1500) {
             this.txtFieldPlacaNueva.setText(placaNueva);
@@ -59,6 +84,9 @@ public class RegistroPlacas extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Genera una nueva placa mediante la clase GeneradorPlacas.
+     */
     private void generarPlaca() {
         while (true) {
             String placaGenerada = GeneradorPlacas.generarCadena();
@@ -69,6 +97,9 @@ public class RegistroPlacas extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que abre el menú principal
+     */
     private void abrirMenuPrincipal() {
         if (this.isVisible()) {
             new SelectTramite(conexion).setVisible(true);
@@ -76,10 +107,17 @@ public class RegistroPlacas extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que muestra un mensaje en la pantalla con el mensaje msj
+     * @param msj Mensaje a mostrar
+     */
     private void mostrarMensajePantalla(String msj) {
         JOptionPane.showMessageDialog(null, msj, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Método que confirma el trámite y si las placas anteriores están vigentes en el auto las cancela.
+     */
     private void confirmarTramite(){
         if (costo == 1000) {
             Placa placaAnterior = this.placasDAO.obtenerPlaca(this.auto.getPlacas());

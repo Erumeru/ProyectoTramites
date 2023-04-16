@@ -12,16 +12,26 @@ import org.itson.dominio.Persona;
 import utilidades.AutomovilesPlacasDTO;
 
 /**
- *
- * @author eruma
+ * UI Para registrar autos nuevos en la base
+ * @author 233133_233259
  */
 public class CreateAutoNuevo extends javax.swing.JFrame {
 
+    /**
+     * Atributo para servir como conexión con la base de datos
+     */
     private IConexionBD conexion;
+    /**
+     * DAO de Auto para realizar operaciones con los autos
+     */
     private AutoDAO autoDAO;
+    /**
+     * Persona a la cual pertenece el trámite
+     */
     private Persona persona;
 
     /**
+     * Constructor por defecto que recibe la persona del trámite y realiza la conexión a la base.
      * Creates new form CreateAutoNuevo
      */
     public CreateAutoNuevo(IConexionBD conexion, Persona persona) {
@@ -32,6 +42,9 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
     }
 
+    /**
+     * Método que abre la ventana de automoviles
+     */
     private void abrirVentanaAutomoviles() {
         if (this.isVisible()) {
             new SelectAuto(conexion, this.persona).setVisible(true);
@@ -39,6 +52,10 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método el cual extrae los datos de los textFields y crea un auto con estos.
+     * @return Objeto Auto con la información de los txtFlields
+     */
     private Auto extraerDatos() {
         String modelo = this.txtFieldModelo.getText(),
                 linea = this.txtFieldLinea.getText(),
@@ -49,6 +66,11 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
         return auto;
     }
 
+    /**
+     * Método que funge como validador de la syntax de la información de un auto
+     * @param automovilValidar Auto a validar datos
+     * @return True si la syntax de la información del auto está bien, false y qué está mal en caso contrario.
+     */
     private boolean validarAuto(Auto automovilValidar) {
         String mensaje = "Campo(s) inválido(s) - ";
         if (automovilValidar.getColor().length() < 3 || automovilValidar.getColor().equalsIgnoreCase("Color")) {
@@ -75,6 +97,9 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que nos manda a la siguiente operación que es el registro de placas si el auto es válido
+     */
     private void operacionSiguiente() {
         AutomovilesPlacasDTO autoPlacas = new AutomovilesPlacasDTO();
         Auto autoIngresado = this.extraerDatos();
@@ -84,11 +109,19 @@ public class CreateAutoNuevo extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que abre el registro de placas
+     * @param autoPlacas DTO que sirve para desplazar la información del auto
+     */
     private void abrirRegistroPlacas(AutomovilesPlacasDTO autoPlacas) {
         new RegistroPlacas(this.conexion, this.persona, autoPlacas, 1500).setVisible(true);
         this.dispose();
     }
 
+    /**
+     * Método que muestra un mensaje en la pantalla mediante un JOptionPane y el String msj de los parámetros
+     * @param msj Mensaje a mostrar.
+     */
     private void mostrarMensajePantalla(String msj) {
         JOptionPane.showMessageDialog(null, msj, "Info", JOptionPane.INFORMATION_MESSAGE);
     }

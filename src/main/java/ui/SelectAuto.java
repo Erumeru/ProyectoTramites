@@ -16,16 +16,26 @@ import utilidades.AutomovilesPlacasDTO;
 import utilidades.ConstantesGUI;
 
 /**
- *
- * @author eruma
+ * UI que permite la selección de un auto
+ * @author 233133_233259
  */
 public class SelectAuto extends javax.swing.JFrame {
 
+    /**
+     * Conexión con la base de datos
+     */
     private IConexionBD conexion;
+    /**
+     * AutoDAO para manejar operaciones con los autos
+     */
     private AutoDAO autoDAO;
+    /**
+     * Persona a la cual le pertenece el trámite que será realizado.
+     */
     private Persona persona;
 
     /**
+     * Constructor que crea la UI y carga los datos de la persona que solicitó el trámite
      * Creates new form SelectAuto
      */
     public SelectAuto(IConexionBD conexion, Persona persona) {
@@ -37,6 +47,9 @@ public class SelectAuto extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
     }
 
+    /**
+     * Método que carga la lista de autos de la base a la UI
+     */
     private void cargarAutos() {
         DefaultTableModel modeloTabla = (DefaultTableModel) this.tblAutos.getModel();
         modeloTabla.setRowCount(0);
@@ -59,6 +72,10 @@ public class SelectAuto extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que abre el buscador de personas
+     * @param gui Constante gui para el constructore de SelectPersona
+     */
     private void abrirBuscadorPersonas(ConstantesGUI gui) {
         if (this.isVisible()) {
             new SelectPersona(conexion, gui).setVisible(true);
@@ -66,10 +83,19 @@ public class SelectAuto extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que muestra un mensaje en la pantalla
+     * @param msj 
+     */
     private void mostrarMensajePantalla(String msj) {
         JOptionPane.showMessageDialog(null, msj, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Método que abre el registro de las placas
+     * @param persona Persona a la que le pertenece el trámite
+     * @param auto Auto seleccionado
+     */
     private void abrirRegistroPlacas(Persona persona, AutomovilesPlacasDTO auto) {
         if (this.isVisible()) {
             new RegistroPlacas(conexion, persona, auto, 1000).setVisible(true);
@@ -77,6 +103,9 @@ public class SelectAuto extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que carga un objeto AutomovilesPlacasDTO con la información del auto seleccionado
+     */
     private void seleccionarAuto() {
         Integer indiceRenglonInicial = 0, indiceColumnaPlacas = 0;
         if (this.tblAutos.getSelectedRow() >= indiceRenglonInicial) {

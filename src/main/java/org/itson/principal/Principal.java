@@ -10,8 +10,8 @@ import interfaces.IConexionBD;
 import ui.SelectTramite;
 
 /**
- *
- * @author 
+ * Esta es la clase principal que corre el programa.
+ * @author 233133_233259
  */
 public class Principal {
 

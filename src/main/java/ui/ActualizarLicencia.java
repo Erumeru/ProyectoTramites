@@ -16,14 +16,26 @@ import org.itson.dominio.TramiteLicencia;
 import utilidades.ConstantesGUI;
 
 /**
- *
- * @author
+ * UI para actualizar la licencia de una persona
+ * @author 233133_233259
  */
 public class ActualizarLicencia extends javax.swing.JFrame {
 
+    /**
+     * Permite la conexión a la base de datos
+     */
     private IConexionBD conexion;
+    /**
+     * Persona a la cual se le actualizará la licencia
+     */
     private Persona persona;
+    /**
+     * EntityManager utilizado para interactuar con la base de datos
+     */
     private EntityManager entityManager;
+    /**
+     * 
+     */
     private Integer vigenciaLicencia;
     private Integer costoLicencia;
     private TramiteLicenciasDAO tramiteLicenciasDAO;
@@ -45,12 +57,16 @@ public class ActualizarLicencia extends javax.swing.JFrame {
     }
 
     /**
+     * Constructor por defecto
      * Creates new form ActualizarLicencia
      */
     public ActualizarLicencia() {
         initComponents();
     }
 
+    /**
+     * Método que calcula el costo de una licencia mediante la vigencia seleccionada
+     */
     private void calcularCosto() {
         String vigencia = (String) this.cbxVigencia.getSelectedItem();
         if (vigencia.equalsIgnoreCase("1 AÑO")) {
@@ -83,10 +99,17 @@ public class ActualizarLicencia extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que muestra un mensaje en la pantalla mediante un String dado en los parámetros
+     * @param msj String del mensaje a mostrar en la pantalla
+     */
     private void mostrarMensajePantalla(String msj) {
         JOptionPane.showMessageDialog(null, msj, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Método que hace la petición del trámite para crear una nueva licencia
+     */
     private void crearLicencia() {
         Persona persona = entityManager.find(Persona.class, this.persona.getId());
         if (persona != null) {
@@ -102,6 +125,10 @@ public class ActualizarLicencia extends javax.swing.JFrame {
         this.abrirMenuPrincipal();
     }
     
+    /**
+     * Método que abre el buscador de personas
+     * @param gui Constante para el constructor de SelectPersona
+     */
     private void abrirBuscadorPersonas(ConstantesGUI gui) {
         if (this.isVisible()) {
             new SelectPersona(conexion, gui).setVisible(true);
@@ -109,6 +136,9 @@ public class ActualizarLicencia extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * Método que abre el menú principal
+     */
     private void abrirMenuPrincipal() {
         if (this.isVisible()) {
             new SelectTramite(conexion).setVisible(true);

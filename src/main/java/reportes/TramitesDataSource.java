@@ -13,16 +13,29 @@ import net.sf.jasperreports.engine.JRField;
 import utilidades.TramitesDTO;
 
 /**
- *
- * @author eruma
+ * Clase que sirve para la creación del reporte Jasper
+ * @author 233133_233259
  */
 public class TramitesDataSource implements JRDataSource {
 
+    /**
+     * Matriz la cual representa nuestra tabla a llenar con información
+     */
     private String[][] listadoDeTramites;
+    /**
+     * Atributo que sirve de DTO para información de los trámites
+     */
     private List<TramitesDTO> listaTramites;
+    /**
+     * Atributo que sirve como index para la tabla.
+     */
     private int index;
     //   private final Object[][] listadoTramites;
 
+    /**
+     * Constructor que llena el arreglo bidimensional con una lista de TramitesDTO
+     * @param listaTramites Lista de trámites con las que llenar el reporte
+     */
     public TramitesDataSource(List<TramitesDTO> listaTramites) {
         this.listaTramites=listaTramites;
         this.listadoDeTramites= new String[listaTramites.size()][4];
@@ -36,12 +49,23 @@ public class TramitesDataSource implements JRDataSource {
         }
     }
 
+    /**
+     * Método que analiza si el index actual es menor al length del listado de tramites
+     * @return Verdadero si el index es menor al lenght de listado de los trámites, falso en caso contrario
+     * @throws JRException Excepción que llega a lanzar.
+     */
     @Override
     public boolean next() throws JRException {
         index++;
         return (index < listadoDeTramites.length);
     }
 
+    /**
+     * Método que te regresa el valor de algún campo
+     * @param jrf Field a analizar
+     * @return Regresa un objeto que está en el campo solicitado
+     * @throws JRException Excepción que llega a lanzar
+     */
     @Override
     public Object getFieldValue(JRField jrf) throws JRException {
         Object value = null;
@@ -65,6 +89,10 @@ public class TramitesDataSource implements JRDataSource {
         return value;
     }
 
+    /**
+     * Método público el cual regresa el DataSource de TramitesDataSource.
+     * @return DataSource de TramitesDataSource.
+     */
     public JRDataSource getDataSource(){
         return new TramitesDataSource(this.listaTramites);
     }

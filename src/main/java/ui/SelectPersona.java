@@ -18,16 +18,26 @@ import utilidades.ConstantesGUI;
 import utilidades.ParametrosBusquedaPersonas;
 
 /**
- *
- * @author eruma
+ * UI para seleccionar una persona
+ * @author 233133_233259
  */
 public class SelectPersona extends javax.swing.JFrame {
 
+    /**
+     * Conexión con la base de datos
+     */
     private IConexionBD conexion;
+    /**
+     * Atributo PersonaDAO para realizar operaciones con persona
+     */
     private PersonaDAO persona;
+    /**
+     * Constante que indica la operación a realizar
+     */
     private ConstantesGUI operacion;
 
     /**
+     * Constructor que crea una UI dependiendo de la constante indicada
      * Creates new form SelectPersona
      */
     public SelectPersona(IConexionBD conexion, ConstantesGUI gui) {
@@ -40,12 +50,18 @@ public class SelectPersona extends javax.swing.JFrame {
         this.establecerLimiteFecha();
     }
 
+    /**
+     * Método que establece un límite para la fecha
+     */
     private void establecerLimiteFecha(){
         LocalDate fechaLimiteInferior = LocalDate.of(1900, 1, 1);
         LocalDate fechaLimiteSuperior = LocalDate.now();
         DpFecha.getSettings().setDateRangeLimits(fechaLimiteInferior, fechaLimiteSuperior);
     }
     
+    /**
+     * Método que carga las personas a la tabla y da formato a la fecha
+     */
     private void cargarPersonas() {
         SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
         DefaultTableModel modeloTabla = (DefaultTableModel) this.tblPersonas.getModel();
@@ -66,6 +82,9 @@ public class SelectPersona extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que abre el menú principal 
+     */
     private void abrirMenuPrincipal() {
         if (this.isVisible()) {
             new SelectTramite(conexion).setVisible(true);
@@ -73,6 +92,9 @@ public class SelectPersona extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que abre la ventana de automoviles cuando el trámite es de placas
+     */
     private void abrirVentanaAutomoviles() {
         if (this.isVisible()) {
             Persona personaElegida = this.persona.consultarPersona((String) this.tblPersonas.getValueAt(this.tblPersonas.getSelectedRow(), 3));
@@ -81,6 +103,9 @@ public class SelectPersona extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que abre la ventana de licencias cuando el trámite es de licencias
+     */
     private void abrirVentanaLicencia() {
         if (this.isVisible()) {
             Persona personaElegida = this.persona.consultarPersona((String) this.tblPersonas.getValueAt(this.tblPersonas.getSelectedRow(), 3));
@@ -89,10 +114,18 @@ public class SelectPersona extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que muestra un mensaje en la pantalla mediante el String msj
+     * @param msj Mensaje a mostrar
+     */
     private void mostrarMensajePantalla(String msj) {
         JOptionPane.showMessageDialog(null, msj, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Método que abre el menú de reporte (HistorialTramites para reportes) dependiendo la constante indicada
+     * @param gui Constante para el constructor HistorialTramites
+     */
     private void abrirMenuReporte(ConstantesGUI gui) {
         if (this.isVisible()) {
             Persona personaElegida = this.persona.consultarPersona((String) this.tblPersonas.getValueAt(this.tblPersonas.getSelectedRow(), 3));
@@ -101,6 +134,10 @@ public class SelectPersona extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que comprueba que la persona puede continuar con el trámite de licencia
+     * @param rfcPersonaSeleccionada Rfc de la persona
+     */
     private void operacionLicencia(String rfcPersonaSeleccionada) {
         boolean vigencia = persona.consultarLicenciaVigentePersona(rfcPersonaSeleccionada),
                 mayoriaEdad = persona.validarMayoriaEdadPersona(rfcPersonaSeleccionada);
@@ -117,6 +154,10 @@ public class SelectPersona extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que comprueba que la persona cuenta con los requisitos para seguir con el trámite de placas
+     * @param rfcPersonaSeleccionada Rfc de la persona
+     */
     private void operacionPlacas(String rfcPersonaSeleccionada) {
         boolean vigencia = persona.consultarLicenciaVigentePersona(rfcPersonaSeleccionada),
                 mayoriaEdad = persona.validarMayoriaEdadPersona(rfcPersonaSeleccionada);
@@ -132,6 +173,10 @@ public class SelectPersona extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que comprueba si la persona es mayor de edad y si lo es abre un HistorialTramites para ver el historial
+     * @param rfcPersonaSeleccionada Rfc de la persona seleccionada
+     */
     private void operacionHistorial(String rfcPersonaSeleccionada) {
         boolean mayoriaEdad = persona.validarMayoriaEdadPersona(rfcPersonaSeleccionada);
         if (mayoriaEdad) {
@@ -142,6 +187,9 @@ public class SelectPersona extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que dependiendo de la constante realiza una operación al avanzar a la siguiente entrada
+     */
     private void siguiente() {
         Integer indiceRenglonInicial = 0, indiceColumnaRFC = 3;
         if (this.tblPersonas.getSelectedRow() >= indiceRenglonInicial) {

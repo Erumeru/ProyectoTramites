@@ -5,9 +5,24 @@
 package utilidades;
 
 /**
- *
- * @author mario
+ * Constantes utilizadas para diferenciar distintas acciones dentro del código y las UI
+ * @author 233133_233259
  */
 public enum ConstantesGUI {
-    LICENCIAS, PLACAS, HISTORIAL, REPORTE
+    /**
+     * Constante para indicar trámite licencias
+     */
+    LICENCIAS, 
+    /**
+     * Constante para indicar trámite placas
+     */
+    PLACAS, 
+    /**
+     * Constante para indicar mostrar historial
+     */
+    HISTORIAL, 
+    /**
+     * Trámite para indicar historialTramites como reporte
+     */
+    REPORTE
 }

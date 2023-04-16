@@ -7,11 +7,15 @@ package utilidades;
 import java.util.Random;
 
 /**
- *
- * @author mario
+ * Clase que funge como un generador aleatorio de placas
+ * @author 233133_233259
  */
 public class GeneradorPlacas {
     
+    /**
+     * Método que genera una cadena con el formato de una placa de automovil
+     * @return String con una placa aleatoria de un automovil
+     */
     public static String generarCadena() {
         Random rnd = new Random();
         StringBuilder sb = new StringBuilder();

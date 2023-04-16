@@ -28,19 +28,38 @@ import utilidades.ParametrosBusquedaTramites;
 import utilidades.TramitesDTO;
 
 /**
- *
- * @author eruma
+ * UI para mostrar el Historial de Trámites
+ * @author 233133_233259
  */
 public class HistorialTramites extends javax.swing.JFrame {
 
+    /**
+     * Constante que indica la operación
+     */
     private ConstantesGUI operacion;
+    /**
+     * Conexión con la base
+     */
     private IConexionBD conexion;
+    /**
+     * Persona cuyos trámites quieren ser consultados
+     */
     private Persona personaSeleccionada;
+    /**
+     * DAO para manejar los trámites de licencias
+     */
     private TramiteLicenciasDAO licenciasDAO;
+    /**
+     * DAO para manejar los trámites de placas
+     */
     private TramitePlacasDAO placasDAO;
+    /**
+     * Reporte de JasperReports.
+     */
     private TramitesDataSource reporteJasper;
 
     /**
+     * Constructor que inicializa la UI dependiendo de la operación seleccionada.
      * Creates new form HistorialTramites
      */
     public HistorialTramites(IConexionBD conexion, ConstantesGUI operacion, Persona personaSeleccionada) {
@@ -55,6 +74,9 @@ public class HistorialTramites extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
     }
 
+    /**
+     * Ajusta la interfaz si sólo se desea ver el historial o se busca generar algún reporte
+     */
     private void ajustarInterfaz() {
         if (operacion == ConstantesGUI.HISTORIAL) {
             btnBuscar.setVisible(false);
@@ -77,6 +99,11 @@ public class HistorialTramites extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que carga los trámites cuando la constante es Historial
+     * @param tramites Lista de TrámitesDTO
+     * @param tipo Tipo de trámites
+     */
     private void operacionHistorial(List<TramitesDTO> tramites, String tipo) {
         if (tipo.equals("Todo")) {
             tramites.addAll(licenciasDAO.cargarTramites(personaSeleccionada.getId()));
@@ -88,6 +115,11 @@ public class HistorialTramites extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que carga los trámites cuando la constante NO es Historial
+     * @param tramites Lista de TrámitesDTO
+     * @param tipo Tipo de trámites
+     */
     private void operacionReporte(List<TramitesDTO> tramites, String tipo) {
         if (tipo.equals("Todo")) {
             tramites.addAll(licenciasDAO.cargarTramites(new ParametrosBusquedaTramites(this.dpInicio.getDate(), this.dpFin.getDate(), this.txtFieldNombre.getText())));
@@ -112,6 +144,10 @@ public class HistorialTramites extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que llena la tabla y da un formato a la fecha.
+     * @param tramites Lista de TrámitesDTO con la que se llenará la tabla
+     */
     private void llenarTabla(List<TramitesDTO> tramites) {
         SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
         DefaultTableModel modeloTabla = (DefaultTableModel) this.tblTramites.getModel();
@@ -125,6 +161,9 @@ public class HistorialTramites extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método utilizado para cargar los trámites dependiendo de las operaciones solicitadas (Historial o no)
+     */
     private void cargarTramites() {
         String tipo = (String) this.cbxTipo.getSelectedItem();
         List<TramitesDTO> tramites = new ArrayList<>();
@@ -157,10 +196,17 @@ public class HistorialTramites extends javax.swing.JFrame {
         this.reporteJasper = new TramitesDataSource(tramites);
     }
 
+    /**
+     * Método que muestra un mensaje en la pantalla mediante el parámetro msj
+     * @param msj Mensaje a mostrar
+     */
     private void mostrarMensajePantalla(String msj) {
         JOptionPane.showMessageDialog(null, msj, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Método que abre el menú principal
+     */
     private void abrirMenuPrincipal() {
         if (this.isVisible()) {
             new SelectTramite(conexion).setVisible(true);
@@ -168,6 +214,9 @@ public class HistorialTramites extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método que genera el reporte de JasperReports y te da una previsualización de cómo se verá
+     */
     private void generarReporte() {
         //Se genera el reporte utilizando la libreria JasperReports.
         try {
