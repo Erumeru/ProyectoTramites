@@ -53,8 +53,10 @@ public class SelectTramite extends javax.swing.JFrame {
      */
     private void abrirMenuReporte(ConstantesGUI gui) {
         if (this.isVisible()) {
-            new HistorialTramites(conexion, gui, null).setVisible(true);
-            this.setVisible(false);
+            HistorialTramites ventana = new HistorialTramites(conexion, gui, null);
+            if(ventana.isVisible()){
+                this.setVisible(false);
+            }
         }
     }
     

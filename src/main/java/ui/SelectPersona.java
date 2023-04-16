@@ -129,8 +129,12 @@ public class SelectPersona extends javax.swing.JFrame {
     private void abrirMenuReporte(ConstantesGUI gui) {
         if (this.isVisible()) {
             Persona personaElegida = this.persona.consultarPersona((String) this.tblPersonas.getValueAt(this.tblPersonas.getSelectedRow(), 3));
-            new HistorialTramites(conexion, gui, personaElegida).setVisible(true);
-            this.setVisible(false);
+            HistorialTramites ventana = new HistorialTramites(conexion, gui, personaElegida);
+            if(ventana.isVisible()){
+                this.setVisible(false);
+            }else{
+                this.abrirMenuPrincipal();
+            }
         }
     }
 

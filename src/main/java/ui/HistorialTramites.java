@@ -29,6 +29,7 @@ import utilidades.TramitesDTO;
 
 /**
  * UI para mostrar el Historial de Trámites
+ *
  * @author 233133_233259
  */
 public class HistorialTramites extends javax.swing.JFrame {
@@ -59,8 +60,8 @@ public class HistorialTramites extends javax.swing.JFrame {
     private TramitesDataSource reporteJasper;
 
     /**
-     * Constructor que inicializa la UI dependiendo de la operación seleccionada.
-     * Creates new form HistorialTramites
+     * Constructor que inicializa la UI dependiendo de la operación
+     * seleccionada. Creates new form HistorialTramites
      */
     public HistorialTramites(IConexionBD conexion, ConstantesGUI operacion, Persona personaSeleccionada) {
         initComponents();
@@ -75,7 +76,8 @@ public class HistorialTramites extends javax.swing.JFrame {
     }
 
     /**
-     * Ajusta la interfaz si sólo se desea ver el historial o se busca generar algún reporte
+     * Ajusta la interfaz si sólo se desea ver el historial o se busca generar
+     * algún reporte
      */
     private void ajustarInterfaz() {
         if (operacion == ConstantesGUI.HISTORIAL) {
@@ -101,6 +103,7 @@ public class HistorialTramites extends javax.swing.JFrame {
 
     /**
      * Método que carga los trámites cuando la constante es Historial
+     *
      * @param tramites Lista de TrámitesDTO
      * @param tipo Tipo de trámites
      */
@@ -117,6 +120,7 @@ public class HistorialTramites extends javax.swing.JFrame {
 
     /**
      * Método que carga los trámites cuando la constante NO es Historial
+     *
      * @param tramites Lista de TrámitesDTO
      * @param tipo Tipo de trámites
      */
@@ -146,6 +150,7 @@ public class HistorialTramites extends javax.swing.JFrame {
 
     /**
      * Método que llena la tabla y da un formato a la fecha.
+     *
      * @param tramites Lista de TrámitesDTO con la que se llenará la tabla
      */
     private void llenarTabla(List<TramitesDTO> tramites) {
@@ -162,15 +167,31 @@ public class HistorialTramites extends javax.swing.JFrame {
     }
 
     /**
-     * Método utilizado para cargar los trámites dependiendo de las operaciones solicitadas (Historial o no)
+     * Método utilizado para cargar los trámites dependiendo de las operaciones
+     * solicitadas (Historial o no)
      */
     private void cargarTramites() {
+        boolean mostrarVentana = true;
         String tipo = (String) this.cbxTipo.getSelectedItem();
         List<TramitesDTO> tramites = new ArrayList<>();
 
         if (operacion == ConstantesGUI.HISTORIAL) {
             this.operacionHistorial(tramites, tipo);
         } else {
+            if (this.dpInicio.getDate() != null && this.dpFin.getDate() != null) {
+                if (this.dpInicio.getDate().isAfter(this.dpFin.getDate())) {
+                    this.mostrarMensajePantalla("La fecha de inicio está después que la del final");
+                    return;
+                }
+            } else {
+                if (this.dpInicio.getDate() == null && this.dpFin.getDate() != null) {
+                    this.mostrarMensajePantalla("Periodo malformado");
+                    return;
+                } else if (this.dpInicio.getDate() != null && this.dpFin.getDate() == null) {
+                    this.mostrarMensajePantalla("Periodo malformado");
+                    return;
+                }
+            }
             this.operacionReporte(tramites, tipo);
         }
 
@@ -179,18 +200,21 @@ public class HistorialTramites extends javax.swing.JFrame {
         if (tramites.size() == 0) {
             if (operacion == ConstantesGUI.HISTORIAL) {
                 this.mostrarMensajePantalla("Esta persona no ha realizado trámites");
-            } else {
-                if (this.dpInicio.getDate() != null && this.dpFin.getDate() != null) {
-                    if (this.dpInicio.getDate().isAfter(this.dpFin.getDate())) {
-                        this.mostrarMensajePantalla("La fecha de inicio está después que la del final");
-                        return;
-                    }
-                }else{
-                    this.mostrarMensajePantalla("Periodo malformado");
-                    return;
+                if (tipo.equals("Todo")) {
+                    mostrarVentana = false;
                 }
+            } else {
                 this.mostrarMensajePantalla("No hay trámites registrados actualmente en el sistema");
+                if (tipo.equals("Todo")
+                        && (this.txtFieldNombre.getText().equalsIgnoreCase("Ingrese su Nombre") || this.txtFieldNombre.getText().isBlank())
+                        && (!(this.dpInicio.getDate() != null && this.dpFin.getDate() != null))) {
+                    mostrarVentana = false;
+                }
             }
+        }
+
+        if (!this.isVisible()) {
+            this.setVisible(mostrarVentana);
         }
 
         this.reporteJasper = new TramitesDataSource(tramites);
@@ -198,6 +222,7 @@ public class HistorialTramites extends javax.swing.JFrame {
 
     /**
      * Método que muestra un mensaje en la pantalla mediante el parámetro msj
+     *
      * @param msj Mensaje a mostrar
      */
     private void mostrarMensajePantalla(String msj) {
@@ -215,7 +240,8 @@ public class HistorialTramites extends javax.swing.JFrame {
     }
 
     /**
-     * Método que genera el reporte de JasperReports y te da una previsualización de cómo se verá
+     * Método que genera el reporte de JasperReports y te da una
+     * previsualización de cómo se verá
      */
     private void generarReporte() {
         //Se genera el reporte utilizando la libreria JasperReports.
